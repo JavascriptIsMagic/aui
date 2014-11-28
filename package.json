@@ -1,6 +1,6 @@
 {
   "name": "aui",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Alicorns UI = Semantic UI + React.js + Bacon.js + Browserify + Gulp",
   "main": "build/release/pages/bundle.min.js",
   "repository": {
@@ -45,6 +45,7 @@
     "del": "0.1",
     "es6ify": "1",
     "gulp": "3",
+    "gulp-bump": "^0.1.11",
     "gulp-livereload": "2",
     "gulp-rename": "1",
     "gulp-util": "3",

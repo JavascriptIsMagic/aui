@@ -1,6 +1,5 @@
 build/*
-!build/release/pages/*
-
+!build/release
 node_modules/*
 
 

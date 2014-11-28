@@ -80,7 +80,7 @@ var
 		__dirname + '/src/**/*.min.css',
 		__dirname + '/src/**/*.min.js',
 		__dirname + '/**/logos/*.png',
-		__dirname + '/node_modules/semantic-ui/dist/**/*',
+		__dirname + '/node_modules/semantic-ui/dist/semantic.min.css',
 	];
 
 // Adds watchify.args to all options if not present:

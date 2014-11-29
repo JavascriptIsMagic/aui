@@ -1,7 +1,7 @@
 <script>
 	location.href =
 		location.pathname.
-			replace(/\/.*$/, '/') +
+			replace(/\/[^\/]*$/, '/') +
 				'build/release/pages/index.html?from=' +
 				location.href
 </script>

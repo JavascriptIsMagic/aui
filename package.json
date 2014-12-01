@@ -1,11 +1,11 @@
 {
   "name": "aui",
-  "version": "0.0.1",
-  "description": "Alicorns UI = Semantic UI + React.js + Bacon.js + Browserify + Gulp",
-  "main": "build/release/pages/bundle.min.js",
+  "version": "0.0.4",
+  "description": "Alicorns UI = Semantic UI + Stylus + React.js + Bacon.js + Browserify + Gulp",
+  "main": "src/lib/aui.bundle.jsx",
   "repository": {
     "type": "git",
-    "url": "https://github.com/javascriptismagic/alicorns-aui.git"
+    "url": "https://github.com/javascriptismagic/alicorns-ui.git"
   },
   "keywords": [
     "aui",
@@ -36,18 +36,19 @@
   "author": "Brian <javascriptismagic@gmail.com>",
   "license": "Public Domain (Unliscense)",
   "bugs": {
-    "url": "https://github.com/javascriptismagic/alicorns-aui/issues"
+    "url": "https://github.com/javascriptismagic/alicorns-ui/issues"
   },
-  "homepage": "http://javascriptismagic.github.io/alicorns-aui/",
+  "homepage": "http://javascriptismagic.github.io/alicorns-ui/",
   "devDependencies": {
     "baconjs": "0.7",
     "browserify": "6",
     "del": "0.1",
     "es6ify": "1",
     "gulp": "3",
-    "gulp-bump": "^0.1.11",
+    "gulp-bump": "0.1",
     "gulp-livereload": "2",
     "gulp-rename": "1",
+    "gulp-spawn": "0.3",
     "gulp-util": "3",
     "insert-css": "0.2",
     "jquery": "2",

@@ -1,14 +1,15 @@
 'use strict';
-/*
-npm install -save-dev gulp gulp-util gulp-rename del run-sequence vinyl-source-stream gulp-livereload browserify watchify stylify reactify es6ify uglifyify insert-css send jquery semantic-ui react react-bacon baconjs
-*/
 
-var array = Function.prototype.call.bind(Array.prototype.slice);
+var npmInstall = "npm install -save-dev gulp gulp-util gulp-chug gulp-rename del run-sequence vinyl-source-stream gulp-livereload browserify watchify stylify reactify es6ify uglifyify insert-css send jquery semantic-ui react react-bacon baconjs";
+
+var array = Function.prototype.call.bind(Array.prototype.slice),
+	path = require('path');
 
 // Gulp:
 var
 	gulp = require('gulp'),
 	gulpUtil = require('gulp-util'),
+	fork = require('child_process').fork,
 	log = gulpUtil.log.bind(gulpUtil),
 	del = require('del'),
 	rename = require('gulp-rename'),
@@ -40,16 +41,13 @@ var
 	transforms = [
 		[ stylify, style],
 		[ reactify, jsx],
-		[ es6ify.configure(/\.jsx$/), jsx],
-		// Uglify even when debugging.
-		// Uglify fixes source maps?
-		[ uglifyify, jsx]
+		[ es6ify.configure(/\.jsx$/), jsx]
 	],
 	
 	options = {
 		debug: {
 			debug: true,
-			entry: './src/Master.jsx',
+			entry: './src/pages.bundle.jsx',
 			path: __dirname + '/build/debug/pages',
 			output: 'bundle.min.js',
 			
@@ -62,12 +60,14 @@ var
 			},
 		},
 		release: {
-			entry: './src/Master.jsx',
+			entry: './src/pages.bundle.jsx',
 			path: __dirname + '/build/release/pages',
 			output: 'bundle.min.js',
 			
 			adds: [es6ify.runtime],
-			transforms: transforms,
+			transforms: transforms.concat([
+				//[ uglifyify, jsx]
+			]),
 			
 			fullPaths: false,
 		}
@@ -79,9 +79,18 @@ var
 		__dirname + '/src/**/*.html',
 		__dirname + '/src/**/*.min.css',
 		__dirname + '/src/**/*.min.js',
-		__dirname + '/**/logos/*.png',
-		__dirname + '/node_modules/semantic-ui/dist/semantic.min.css',
+		__dirname + '/**/logos/*.png'
 	];
+
+// Build Semantic-ui if needed:
+try {
+	filePaths.push(require.resolve('semantic-ui/dist/semantic.min.css'));
+} catch (error) {
+	throw new Error('You must build Semantic-UI first:' + '\n' +
+		'cd ' + path.dirname(require.resolve('semantic-ui/gulpfile')) + '\n' +
+		'npm install' + '\n' +
+		'gulp install' + '\n');
+}
 
 // Adds watchify.args to all options if not present:
 Object.keys(options).forEach(function (type) {
@@ -163,10 +172,15 @@ gulp.task('aui:clean', [
 
 gulp.task('aui:install', function (callback) {
 	sequence(
-		'aui:clean',
-		'aui:build:release',
+		'aui:clean', [
+		'aui:install:semantic',
+		'aui:build:release'],
 		callback);
 });
+
+gulp.task('aui:install:semantic', function () {
+	
+})
 
 // UI Build Release:
 gulp.task('aui:build:release', function (callback) {

@@ -1,27 +1,26 @@
 const
 	React = require('react/addons');
 
-export const applyClassNamesRecursively = function (Parent) {
-	if (Array.isArray(Parent))
-		return Parent.map(applyClassNamesRecursively);
-	if (typeof Parent === 'object') {
-		return (React.addons.cloneWithProps(Parent, {
+export const applyClassNamesRecursively = function (Component) {
+	if (Array.isArray(Component))
+		return Component.map(applyClassNamesRecursively);
+	if (Component && Component.props) {
+		return (React.addons.cloneWithProps(Component, {
+			key: Component.key,
+			ref: Component.ref,
 			className:
-				(Object.keys((Parent.props.className ?
-					Parent.props.className.split(' ') :
-					[]).
-						concat(Object.keys(Parent.props)).
-							filter(key => Parent.props[key] === true).
-							reduce((names, name) => {
-								names[name] = true;
-								return names;
-							}, {})).
-							join(' ')),
+				(Object.keys(Component.props).
+					filter(key =>
+						Component.props[key] === true).
+					reduce((names, name) => {
+						names[name] = true;
+						return names;
+					}, {})).join(' ')),
 			children:
-				applyClassNamesRecursively(Parent.props.children)
+				applyClassNamesRecursively(Component.props.children)
 		}));
 	}
-	return Parent;
+	return Component;
 }
 
 export const Aui = React.createClass({

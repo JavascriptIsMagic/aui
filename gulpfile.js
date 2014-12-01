@@ -84,7 +84,7 @@ var
 
 // Build Semantic-ui if needed:
 try {
-	filePaths.push(require.resolve('semantic-ui/dist/semantic.min.css'));
+	filePaths.push(path.dirname(require.resolve('semantic-ui/dist/semantic.min.css')) + '/**/*');
 } catch (error) {
 	throw new Error('You must build Semantic-UI first:' + '\n' +
 		'cd ' + path.dirname(require.resolve('semantic-ui/gulpfile')) + '\n' +

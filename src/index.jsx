@@ -12,13 +12,14 @@ export const Index = React.createClass({
 					<div ui row>
 						<div ui column>
 							<a href="https://github.com/javascriptismagic/alicorns-ui">
-								<img ui fixed right top small image src="logos/fork.png"  
+								<img ui small image src="logos/fork.png"  
 									style={{ position: 'fixed', right: '0rem', top: '0rem', padding: '0rem', }} />
 								<div ui hidden divider />
 								<h1 ui header>
 									Alicorns UI
 								</h1>
 							</a>
+							<Login />
 							<div ui divider />
 							<div ui column>
 								<div ui doubling three column grid>
@@ -53,8 +54,6 @@ export const Index = React.createClass({
 										</a>
 									</div>
 								</div>
-								<div ui divider />
-								<Login />
 							</div>
 						</div>
 					</div>

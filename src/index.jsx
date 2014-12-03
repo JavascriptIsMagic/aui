@@ -1,6 +1,6 @@
 const
 	React = require('react'),
-	Aui = require('./lib/aui.bundle.jsx').Aui,
+	Aui = require('./lib/aui.js').Aui,
 	Login = require('./login.jsx').Login;
 require('insert-css')(require('./index.styl'));
 

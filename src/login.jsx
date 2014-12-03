@@ -1,5 +1,5 @@
 const React = require('React'),
-	Aui = require('./lib/aui.bundle.jsx').Aui;
+	Aui = require('./lib/aui.js').Aui;
 
 export const Login = React.createClass({
 	render() {

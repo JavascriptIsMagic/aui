@@ -1,6 +1,6 @@
 {
   "name": "aui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Alicorns UI = Semantic UI + Stylus + React.js + Bacon.js + Browserify + Gulp",
   "main": "src/lib/aui.js",
   "repository": {

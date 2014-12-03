@@ -111,7 +111,7 @@ function server(options, callback) {
 	livereload.listen(options.port.livereload);
 	gulp.watch(filePaths,
 		['aui:build:' + options.type + ':copyfiles']);
-	gulp.watch([options.path + '/**/*'], function (event) {
+	gulp.watch([options.path + '/**/*'].concat(filePaths), function (event) {
 		livereload.changed(event.path);
 	});
 	http.createServer(function(request, response) {

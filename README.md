@@ -1,11 +1,11 @@
-alicorns-ui
-==========
+Aui
+====
 
-Alicorns UI = Semantic UI + Stylus + React.js + Bacon.js + Browserify + Gulp
+Aui is React + Semantic UI for Alicorns
 
 This is in early stages of development and is really little more then a starting point for working with React + Semantic UI.
 
-```
+```js
 const React = require('React'),
 	Aui = require('aui').Aui;
 
@@ -28,6 +28,16 @@ export const Login = React.createClass({
 		);
 	}
 });
+
+React.render(
+	<Aui>
+		<div ui page grid>
+			<div column>
+				<Login/>
+			</div>
+		</div>
+	</Aui>,
+	document.body);
 ```
 
-Public Domain (Unliscense)
+[Public Domain (Unlicense)](http://unlicense.org/)

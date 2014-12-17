@@ -49,9 +49,9 @@ var Aui = React.createClass({
 	render: function () {
 		return query(function (Element) {
 				return Element.type !== NoAui;
-			}, compose(
+			}, compose([
 				classNameFromProps,
-				maybeStateWrapper),
+				maybeStateWrapper ]),
 			this.props.children);
 	}
 });
@@ -66,7 +66,6 @@ var NoAui = React.createClass({
 	}
 });
 
-
 /**
 	<AuiStateWrapper/> React Component is intended for internal use only.
 	It manages things like open/close state of dropdown/accordion menus.
@@ -78,7 +77,7 @@ var AuiStateWrapper = React.createClass({
 	},
 	toggle: function () {
 		this.setState({
-			!this.state.open,
+			open: !this.state.open,
 		});
 	},
 	render: function () {
@@ -98,7 +97,7 @@ var AuiStateWrapper = React.createClass({
 					};
 				}
 			},
-			mergeWithProps(this.props.children, { onClick={this.toggle} }));
+			mergeWithProps(this.props.children, { onClick: this.toggle }));
 	}
 });
 function maybeStateWrapper(Element) {
@@ -141,7 +140,6 @@ function query(predicate, transformation, Elements) {
 function compose(transformations, Element) {
 	if (arguments.length < 2) { return compose.bind(null).bind(arguments); }
 	return (transformations
-		// right to left order:
 		.reverse()
 		.reduce(function (Element, transformation) {
 			return transformation(Element);
@@ -183,7 +181,6 @@ exports.Aui = Aui;
 exports.NoAui = NoAui;
 
 exports.query = query;
-exports.conditional = conditional;
 exports.compose = compose;
 
 exports.mergeWithProps = mergeWithProps;

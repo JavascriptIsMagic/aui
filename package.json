@@ -2,7 +2,7 @@
   "name": "aui",
   "version": "0.3.0",
   "description": "Aui is React + Semantic UI for Alicorns",
-  "main": "src/lib/aui.js",
+  "main": "src/aui.browser.js",
   "dependencies": {
     "react": "0.12",
     "semantic-ui": "1"

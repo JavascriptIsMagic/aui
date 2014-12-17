@@ -49,9 +49,10 @@ var Aui = React.createClass({
 	render: function () {
 		return query(function (Element) {
 				return Element.type !== NoAui;
-			}, compose([
-				classNameFromProps,
-				maybeStateWrapper ]),
+			},
+			function (Element) {
+				return wrappable(classNameFromProps(Element));
+			},
 			this.props.children);
 	}
 });
@@ -67,11 +68,11 @@ var NoAui = React.createClass({
 });
 
 /**
-	<AuiStateWrapper/> React Component is intended for internal use only.
+	<AuiWrapper/> React Component is intended for internal use only.
 	It manages things like open/close state of dropdown/accordion menus.
 	use the <Aui/> React Component to apply this class to dropdowns and accordions
 */
-var AuiStateWrapper = React.createClass({
+var AuiWrapper = React.createClass({
 	getInitialState: function () {
 		return { open: false };
 	},
@@ -81,34 +82,42 @@ var AuiStateWrapper = React.createClass({
 		});
 	},
 	render: function () {
-		return query(null,
+		console.log('awfwfw?', this.props.children);
+		return classNameFromProps(query(null,
 			function (Element) {
-				if (Element.props.dropdown || Element.props.content || Element.props.title) {
-					return {
-						active: this.state.open,
-						visible: this.state.open,
-					}
+				var props = {};
+				if (	Element.props.dropdown === true ||
+							Element.props.accordion === true) {
+					props.onClick = this.toggle;
 				}
-				if (Element.props.menu) {
-					return {
-						transition: true,
-						visible: this.state.open,
-						hidden: !this.state.open,
-					};
+				if (	Element.props.dropdown === true ||
+							Element.props.content === true ||
+							Element.props.title === true) {
+					props.active = this.state.open;
+					props.visible = this.state.open;
 				}
+				if (	Element.props.menu === true) {
+					props.transition = true;
+					props.visible = this.state.open;
+					props.hidden = !this.state.open;
+				}
+				return props;
 			},
-			mergeWithProps(this.props.children, { onClick: this.toggle }));
+			mergeWithProps(this.props.children, { onClick: this.toggle })));
 	}
 });
-function maybeStateWrapper(Element) {
-	if (Element.props.dropdown === true || Element.props.accordion === true) {
-		return React.createElement(AuiDropdownWrapper, this.props.children);
+function wrappable(Element) {
+	if (arguments.length < 1) { return mergeWithProps.bind(null).bind(arguments); }
+	if (Element.props && Element.props.children &&
+			((Element.props.dropdown === true) ||
+				(Element.props.accordion === true))) {
+		return React.createElement(AuiWrapper, Element);
 	}
 	return Element;
 }
 
 /**
-	@function query(predicate, transformation, Elements)
+	@function query(predicate, transformation, Elements) -> Elements
 	If predicate(Element) returns true,
 		applies a transformation function to the matched Elements children recursively.
 	If predicate does not return true for an Element, Elements.props.children is not touched.
@@ -134,20 +143,7 @@ function query(predicate, transformation, Elements) {
 }
 
 /**
-	@function compose(transformations[], Element)
-	Applies an Array of transformations in right to left order.
-*/
-function compose(transformations, Element) {
-	if (arguments.length < 2) { return compose.bind(null).bind(arguments); }
-	return (transformations
-		.reverse()
-		.reduce(function (Element, transformation) {
-			return transformation(Element);
-		}, Element));
-}
-
-/**
-	@function mergeWithProps(props{}, Element)
+	@function mergeWithProps(props{}, Element) -> Element
 	Clones an Element with new properties applied, and copies the Key and Ref if not specified.
 	This is useful if you want to modify nodes, replacing them with a new modified version.
 	If props isValidElement, the props of that props{} element will be merged into Element.
@@ -163,16 +159,17 @@ function mergeWithProps(props, Element) {
 }
 
 /**
-	@function classNameFromProps(props{})
+	@function classNameFromProps(props{}) -> props{}
 	@returns a className string from all the props{} that === true
 */
-function classNameFromProps(props) {
-	return ({
-		className: Object.keys(Element.props)
+function classNameFromProps(Element) {
+	if (arguments.length < 1) { return mergeWithProps.bind(null).bind(arguments); }
+	return mergeWithProps({
+		className: Object.keys(Element.props || {})
 			.filter(function (property) {
 				return Element.props[property] === true;
 			}).join(' ')
-	});
+	}, Element);
 }
 
 
@@ -181,7 +178,6 @@ exports.Aui = Aui;
 exports.NoAui = NoAui;
 
 exports.query = query;
-exports.compose = compose;
 
 exports.mergeWithProps = mergeWithProps;
 exports.classNameFromProps = classNameFromProps;

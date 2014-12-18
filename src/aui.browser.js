@@ -1,15 +1,6 @@
 'use strict';
-/**
-	@namespace Aui
-	All functions are auto-curried / partial application.
-	(if you do not supply enough arguments to the function,
-		it will bind those partial arguments to itself and return.)
-	@example ```js
-	threeArgs(a, b) === threeArgs.bind(null, a, b)
-	threeArgs(a)(b)(c) === threeArgs(a, b, c)
-	```
-*/
 var
+	apply = Function.prototype.apply,
 	React = require('react/addons'),
 	cloneWithProps = React.addons.cloneWithProps;
 
@@ -50,9 +41,8 @@ var Aui = React.createClass({
 		return query(function (Element) {
 				return Element.type !== NoAui;
 			},
-			function (Element) {
-				return wrappable(classNameFromProps(Element));
-			},
+			[	classNameFromProps,
+				wrappable],
 			this.props.children);
 	}
 });
@@ -82,10 +72,9 @@ var AuiWrapper = React.createClass({
 		});
 	},
 	render: function () {
-		console.log('awfwfw?', this.props.children);
-		return classNameFromProps(query(null,
+		return (query(null,
 			function (Element) {
-				var props = {};
+				var props = { className: '' };
 				if (	Element.props.dropdown === true ||
 							Element.props.accordion === true) {
 					props.onClick = this.toggle;
@@ -93,25 +82,22 @@ var AuiWrapper = React.createClass({
 				if (	Element.props.dropdown === true ||
 							Element.props.content === true ||
 							Element.props.title === true) {
-					props.active = this.state.open;
-					props.visible = this.state.open;
+					props.className += this.state.open ? ' active visible ' : '';
 				}
 				if (	Element.props.menu === true) {
-					props.transition = true;
-					props.visible = this.state.open;
-					props.hidden = !this.state.open;
+					props.className += this.state.open ? ' transition visible ' : ' transition hidden ';
 				}
+				if (!props.className) { delete props.className; }
 				return props;
-			},
+			}.bind(this),
 			mergeWithProps(this.props.children, { onClick: this.toggle })));
 	}
 });
 function wrappable(Element) {
-	if (arguments.length < 1) { return mergeWithProps.bind(null).bind(arguments); }
 	if (Element.props && Element.props.children &&
 			((Element.props.dropdown === true) ||
 				(Element.props.accordion === true))) {
-		return React.createElement(AuiWrapper, Element);
+		return React.createElement(AuiWrapper, {}, Element);
 	}
 	return Element;
 }
@@ -124,18 +110,17 @@ function wrappable(Element) {
 	If predicate is not a function it matches all Elements (null predicate = optional)
 */
 function query(predicate, transformation, Elements) {
-	if (arguments.length < 3) { return query.bind(null).bind(arguments); }
+	transformation = compose.bind(null, transformation);
 	function query(Element) {
 		if (Array.isArray(Element)) { return Element.map(query); }
 		if (React.isValidElement(Element)) {
-			var transformedElement = mergeWithProps(transformation(Element), Element);
-			if (transformedElement.props.children &&
+			if (Element.props.children &&
 					(!(predicate instanceof Function) || predicate(Element))) {
-				return mergeWithProps({
-					children: query(transformedElement.props.children)
-				}, transformedElement);
+				Element = mergeWithProps({
+					children: query(Element.props.children)
+				}, Element);
 			}
-			return transformedElement;
+			return transformation(Element);
 		}
 		return Element;
 	}
@@ -150,26 +135,35 @@ function query(predicate, transformation, Elements) {
 	@returns a new element with props{} merged into Element.
 */
 function mergeWithProps(props, Element) {
-	if (arguments.length < 2) { return mergeWithProps.bind(null).bind(arguments); }
 	if (props === Element) { return Element; }
-	if (React.isValidElement(props)) { props = props.props; }
+	if (React.isValidElement(props)) { return props; }
 	if (Element.key) { props.key = props.key || Element.key; }
 	if (Element.ref) { props.ref = props.ref || Element.ref; }
 	return cloneWithProps(Element, props);
 }
 
+function compose(transformations, Element) {
+	transformations = (Array.isArray(transformations) ?
+		transformations : [transformations]);
+	return (transformations
+		.reverse()
+		.reduce(function (Element, transformation) {
+			return mergeWithProps(transformation(Element), Element);
+		}, Element));
+}
+
 /**
-	@function classNameFromProps(props{}) -> props{}
+	@function classNameFromProps(Element) -> props{}
 	@returns a className string from all the props{} that === true
 */
-function classNameFromProps(Element) {
-	if (arguments.length < 1) { return mergeWithProps.bind(null).bind(arguments); }
-	return mergeWithProps({
-		className: Object.keys(Element.props || {})
+function classNameFromProps(props) {
+	if (React.isValidElement(props)) { props = props.props; }
+	return ({
+		className: Object.keys(props || {})
 			.filter(function (property) {
-				return Element.props[property] === true;
+				return props[property] === true;
 			}).join(' ')
-	}, Element);
+	});
 }
 
 

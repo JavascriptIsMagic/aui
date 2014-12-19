@@ -1,6 +1,5 @@
 'use strict';
 var
-	apply = Function.prototype.apply,
 	React = require('react/addons'),
 	cloneWithProps = React.addons.cloneWithProps;
 
@@ -41,8 +40,7 @@ var Aui = React.createClass({
 		return query(function (Element) {
 				return Element.type !== NoAui;
 			},
-			[	classNameFromProps,
-				wrappable],
+			[classNameFromProps, wrapSemanticModules, classNameFromProps],
 			this.props.children);
 	}
 });
@@ -57,47 +55,109 @@ var NoAui = React.createClass({
 	}
 });
 
-/**
-	<AuiWrapper/> React Component is intended for internal use only.
-	It manages things like open/close state of dropdown/accordion menus.
-	use the <Aui/> React Component to apply this class to dropdowns and accordions
-*/
-var AuiWrapper = React.createClass({
-	getInitialState: function () {
-		return { open: false };
-	},
+
+var AuiDropdown = React.createClass({
+	getInitialState: function () { return {}; },
 	toggle: function () {
 		this.setState({
-			open: !this.state.open,
+			dropdownOpen: !this.state.dropdownOpen,
+		});
+	},
+	select: function (value, text) {
+		var event = {
+			name: this.props.children.props.name,
+			text: text,
+			value: value,
+		};
+		event.target = event;
+		if (this.props.children.props.onInput) {
+			this.props.children.props.onInput(event);
+		}
+		if (this.props.children.props.onChange) {
+			this.props.children.props.onChange(event);
+		}
+		this.setState({
+			text: text,
+			value: value,
 		});
 	},
 	render: function () {
-		return (query(null,
-			function (Element) {
-				var props = { className: '' };
-				if (	Element.props.dropdown === true ||
-							Element.props.accordion === true) {
-					props.onClick = this.toggle;
-				}
-				if (	Element.props.dropdown === true ||
-							Element.props.content === true ||
-							Element.props.title === true) {
-					props.className += this.state.open ? ' active visible ' : '';
-				}
-				if (	Element.props.menu === true) {
-					props.className += this.state.open ? ' transition visible ' : ' transition hidden ';
-				}
-				if (!props.className) { delete props.className; }
-				return props;
-			}.bind(this),
-			mergeWithProps(this.props.children, { onClick: this.toggle })));
+		return (mergeWithProps({
+			onClick: this.toggle,
+			children: this.props.children.props.children
+				.map(function (Element) {
+					if (Element.props.text === true && this.state.text) {
+						return mergeWithProps({
+							children: this.state.text,
+						}, Element);
+					}
+					if (Element.props.menu === true) {
+						return mergeWithProps({
+							className: this.state.dropdownOpen ? 'transition visible' : 'transition hidden',
+							children: Element.props.children.map(function (Element) {
+								var value = Element.props.value || Element.props.dataValue || Element.props['data-value'];
+								if (Element.props.item === true) {
+									return mergeWithProps({
+										onClick: this.select.bind(null, value, Element.props.children),
+									}, Element);
+								}
+								return Element;
+							}.bind(this)),
+						}, Element);
+					}
+					return Element;
+				}.bind(this)),
+		}, this.props.children));
 	}
 });
-function wrappable(Element) {
-	if (Element.props && Element.props.children &&
-			((Element.props.dropdown === true) ||
-				(Element.props.accordion === true))) {
-		return React.createElement(AuiWrapper, {}, Element);
+
+var AuiAccordian = React.createClass({
+	getInitialState: function () { return {}; },
+	toggle: function (index) {
+		var state = Object.keys(this.state)
+			.reduce(function (state, key) {
+				state[key] = false;
+				return state;
+			}, { });
+		state['accordionOpen' + index] = !this.state['accordionOpen' + index];
+		this.setState(state);
+	},
+	render: function () {
+		var accordion = (mergeWithProps({
+			children: this.props.children.props.children
+				.map(function (Element, index) {
+					var
+						title = Element.props.title === true,
+						content = Element.props.content === true,
+						contentIndex = (title ? index + 1 : index);
+					if (title || content) {
+						return mergeWithProps({
+							onClick: this.toggle.bind(null, contentIndex),
+							className: this.state['accordionOpen' + contentIndex] ? 'active' : '',
+						}, Element);
+					}
+					return Element;
+				}.bind(this)),
+		}, this.props.children));
+		return accordion;
+	}
+});
+
+function wrapSemanticModules(Element) {
+	if (
+			Element &&
+			Element.props &&
+			Element.props.children &&
+			Element.props.icon !== true &&
+			Element.props.ui === true) {
+		if (Element.props.dropdown === true) {
+			console.log(Element.props);
+			return React.createElement(AuiDropdown, {}, Element);
+		}
+		if (Element.props.accordion === true) {
+			console.log(Element.props);
+			return React.createElement(AuiAccordian, {}, Element);
+		}
 	}
 	return Element;
 }
@@ -128,6 +188,20 @@ function query(predicate, transformation, Elements) {
 }
 
 /**
+	@function compose(transformations[], Element)
+	merges the results of transformations[] in right to left order.
+*/
+function compose(transformations, Element) {
+	transformations = (Array.isArray(transformations) ?
+		transformations : [transformations]);
+	return (transformations
+		.reverse()
+		.reduce(function (Element, transformation) {
+			return mergeWithProps(transformation(Element), Element);
+		}, Element));
+}
+
+/**
 	@function mergeWithProps(props{}, Element) -> Element
 	Clones an Element with new properties applied, and copies the Key and Ref if not specified.
 	This is useful if you want to modify nodes, replacing them with a new modified version.
@@ -140,16 +214,6 @@ function mergeWithProps(props, Element) {
 	if (Element.key) { props.key = props.key || Element.key; }
 	if (Element.ref) { props.ref = props.ref || Element.ref; }
 	return cloneWithProps(Element, props);
-}
-
-function compose(transformations, Element) {
-	transformations = (Array.isArray(transformations) ?
-		transformations : [transformations]);
-	return (transformations
-		.reverse()
-		.reduce(function (Element, transformation) {
-			return mergeWithProps(transformation(Element), Element);
-		}, Element));
 }
 
 /**
@@ -172,6 +236,7 @@ exports.Aui = Aui;
 exports.NoAui = NoAui;
 
 exports.query = query;
+exports.compose = compose;
 
 exports.mergeWithProps = mergeWithProps;
 exports.classNameFromProps = classNameFromProps;

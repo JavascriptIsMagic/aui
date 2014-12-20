@@ -57,35 +57,81 @@ var NoAui = React.createClass({
 
 
 var AuiDropdown = React.createClass({
-	getInitialState: function () { return {}; },
-	toggle: function () {
+	getInitialState: function () {
+		var props = this.props.children.props;
+		return {
+			name: props.name,
+			value: props.defaultValue,
+			dropdownOpen: false,
+			search: '',
+			text: ((Array.isArray(props.children) ? props.children: [props.children])
+				.filter(function (child) {
+					return (child.props || {}).text === true;
+				}).map(function (child) {
+					return (typeof (child.props.children) === 'string' ? child.props.children : '');
+				})[0] || ''),
+		};
+	},
+	toggle: function (event) {
+		function isInput(domNode) {
+			return ('' + (domNode||{}).tagName).toUpperCase() === 'INPUT';
+		}
+		var clickedInput = isInput(event.target);
 		this.setState({
-			dropdownOpen: !this.state.dropdownOpen,
-		});
+			dropdownOpen: clickedInput || !this.state.dropdownOpen,
+		}, function () {
+			var toggle = function (event) {
+				document.removeEventListener('click', toggle);
+				if (this.state.dropdownOpen) {
+					this.toggle(event);
+				}
+			}.bind(this);
+			if (this.state.dropdownOpen) {
+				document.addEventListener('click', toggle);
+			}
+		}.bind(this));
 	},
 	select: function (value, text) {
-		var event = {
-			name: this.props.children.props.name,
-			text: text,
-			value: value,
-		};
-		event.target = event;
-		if (this.props.children.props.onInput) {
-			this.props.children.props.onInput(event);
-		}
-		if (this.props.children.props.onChange) {
-			this.props.children.props.onChange(event);
-		}
 		this.setState({
 			text: text,
+			search: this.state.search,
 			value: value,
+		}, function () {
+			var event = {
+				type: 'input',
+				timeStamp: Date.now(),
+				target: this.state
+			};
+			if (this.props.children.props.onInput) {
+				this.props.children.props.onInput(event);
+			}
+			if (this.props.children.props.onChange) {
+				this.props.children.props.onChange(event);
+			}
+		}.bind(this));
+	},
+	search: function (event) {
+		this.setState({
+			search: event.target.value
 		});
 	},
 	render: function () {
+		console.log(this.state);
+		var searchInput = function (Element) {
+				if (Element.type === 'input' && Element.props && Element.props.search) {
+					return mergeWithProps({
+						onInput: this.search,
+					}, Element);
+				}
+				return Element;
+			}.bind(this),
+			searchRegex = this.state.search ? new RegExp(this.state.search.split(/[^a-z0-9]+/gi).join('|'), 'i') : null;
 		return (mergeWithProps({
 			onClick: this.toggle,
 			children: this.props.children.props.children
 				.map(function (Element) {
+					if (!Element.props) { return Element; }
+					Element = searchInput(Element);
 					if (Element.props.text === true && this.state.text) {
 						return mergeWithProps({
 							children: this.state.text,
@@ -95,9 +141,14 @@ var AuiDropdown = React.createClass({
 						return mergeWithProps({
 							className: this.state.dropdownOpen ? 'transition visible' : 'transition hidden',
 							children: Element.props.children.map(function (Element) {
+								if (!Element.props) { return Element; }
+								Element = searchInput(Element);
 								var value = Element.props.value || Element.props.dataValue || Element.props['data-value'];
 								if (Element.props.item === true) {
 									return mergeWithProps({
+										className: (searchRegex ?
+											(searchRegex.test(Element.props.children||'') ||
+												(searchRegex.test(value||''))) : true) ? '' : 'filtered',
 										onClick: this.select.bind(null, value, Element.props.children),
 									}, Element);
 								}
@@ -151,11 +202,9 @@ function wrapSemanticModules(Element) {
 			Element.props.icon !== true &&
 			Element.props.ui === true) {
 		if (Element.props.dropdown === true) {
-			console.log(Element.props);
 			return React.createElement(AuiDropdown, {}, Element);
 		}
 		if (Element.props.accordion === true) {
-			console.log(Element.props);
 			return React.createElement(AuiAccordian, {}, Element);
 		}
 	}
@@ -235,8 +284,10 @@ module.exports = exports = Aui;
 exports.Aui = Aui;
 exports.NoAui = NoAui;
 
-exports.query = query;
-exports.compose = compose;
+// These are not ready enough to be exported?:
 
-exports.mergeWithProps = mergeWithProps;
-exports.classNameFromProps = classNameFromProps;
+// exports.query = query;
+// exports.compose = compose;
+
+// exports.mergeWithProps = mergeWithProps;
+// exports.classNameFromProps = classNameFromProps;

@@ -28,7 +28,8 @@ var Page = React.createClass({
 					<div ui divider/>
 					<h1 ui dividing header>Examples</h1>
 					<div ui items>
-						<Example title="Simple Login Screen" fiddle="9tcqoyme/1" />
+						<Example title="Simple Login Screen" fiddle="9tcqoyme/5" />
+						<Example title="Form Validation" fiddle="9jz1zkjy/1" />
 					</div>
 				</div>
 			</Aui>
@@ -45,3 +46,44 @@ React.render((
 		</div>
 	</Aui>
 ), document.body);
+
+
+
+
+
+
+
+
+
+
+
+
+var Aui = window.Aui;
+
+var Login = React.createClass({
+ render() {
+  return (
+   <Aui>
+    <form ui form>
+     <h1 ui header>Welcome!</h1>
+     <div ui large fluid icon input>
+      <input type="text" name="username" placeholder="username..." /> <i user icon/>
+     </div>
+     <div ui large fluid icon input>
+      <input type="password" name="password" placeholder="password..." /> <i privacy icon/>
+     </div>
+     <div ui large white fluid button> Login </div>
+    </form>
+   </Aui>
+  );
+ }
+});
+
+React.render(
+<Aui>
+ <div ui page grid>
+  <div column>
+   <Login />
+  </div>
+ </div>
+</Aui>, document.body);

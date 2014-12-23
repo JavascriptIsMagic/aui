@@ -1,9 +1,5 @@
-Aui
-====
-
-Aui is React + Semantic UI for Alicorns
-
-This is in early stages of development and is really little more then a starting point for working with React + Semantic UI.
+<Aui/> = React + Semantic UI for Alicorns.
+==========================================
 
 ```js
 const React = require('React'),

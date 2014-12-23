@@ -72,16 +72,13 @@ var Aui = React.createClass({
 			if (Array.isArray(Element)) { return Element.map(query); }
 			if (	React.isValidElement(Element) &&
 						Element.props &&
-						Element.type !== NoAui &&
+						Element.props.noaui !== true &&
 						Element.type !== Semantic) {
 				var
 					props = {
 						className: Object.keys(Element.props)
 							.filter(function (property) {
-								return (Element.props[property] === true ||
-									(	moduleSearch.test(property) &&
-										Element.props[property] &&
-										Element.props[property].constructor === Object));
+								return (Element.props[property] === true || moduleSearch.test(property));
 							}).join(' '),
 					};
 				if (Element.key) { props.key = Element.key; }
@@ -100,12 +97,6 @@ var Aui = React.createClass({
 	},
 });
 
-var NoAui = React.createClass({
-	render: function () {
-		return this.props.children;
-	},
-});
-
 var Semantic = React.createClass({
   propTypes: {
     children: React.PropTypes.element.isRequired
@@ -115,9 +106,11 @@ var Semantic = React.createClass({
 	},
 	applySettings: function (settings) {
 		var props = this.props.children.props,
-			moduleType = moduleSearch.exec(props.className)[0];
+			moduleType = moduleSearch.exec(props.className)[0],
+			element = jQuery(this.getDOMNode());
 		settings = settings || props[moduleType];
-		jQuery(this.getDOMNode())[moduleType](settings);
+		settings = Array.isArray(settings) ? settings : [settings];
+		element[moduleType].apply(element, settings);
 	},
 	componentDidMount: function () {
 		this.applySettings();
@@ -132,5 +125,4 @@ var Semantic = React.createClass({
 
 module.exports = exports = Aui;
 exports.Aui = Aui;
-exports.NoAui = NoAui;
 exports.Semantic = Semantic;

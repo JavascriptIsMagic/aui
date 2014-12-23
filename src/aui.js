@@ -1,7 +1,7 @@
 'use strict';
 var
-	jQuery = global.jQuery,
-	React = require('react/addons'),
+	jQuery = window.jQuery,
+	React = window.React || require('react/addons'),
 	cloneWithProps = React.addons.cloneWithProps,
 	modules = [
 		"accordion",

@@ -1,6 +1,6 @@
 {
   "name": "aui",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "description": "<Aui/> = React + Semantic UI for Alicorns.",
   "main": "index.js",
   "keywords": [
@@ -11,7 +11,10 @@
     "reactjs",
     "react.js",
     "react-component",
-    "alicorns"
+    "react component",
+    "alicorns",
+    "alicorn",
+    "magic"
   ],
   "dependencies": {
     "react": "0.12",

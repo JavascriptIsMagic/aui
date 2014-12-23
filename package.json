@@ -1,18 +1,29 @@
 {
   "name": "aui",
-  "version": "0.3.1",
-  "description": "Aui is React + Semantic UI for Alicorns",
-  "main": "src/aui.browser.js",
+  "version": "0.3.5",
+  "description": "<Aui/> = React + Semantic UI for Alicorns.",
+  "main": "index.js",
+  "keywords": [
+    "react",
+    "semantic",
+    "semantic-ui",
+    "semantic ui",
+    "reactjs",
+    "react.js",
+    "react-component",
+    "alicorns"
+  ],
   "dependencies": {
     "react": "0.12",
-    "semantic-ui": "1"
+    "semantic-ui": "1",
+    "jquery": "2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/javascriptismagic/aui.git"
   },
   "author": "Brian <javascriptismagic@gmail.com>",
-  "license": "Public Domain (Unliscense)",
+  "license": "Public Domain (Unlicense)",
   "bugs": {
     "url": "https://github.com/javascriptismagic/aui/issues"
   },

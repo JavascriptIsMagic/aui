@@ -1,30 +1,59 @@
-<Aui/> = React + Semantic UI for Alicorns.
+\<Aui/\> = React + Semantic UI for Alicorns.
 ==========================================
 
-Aui is a small glue component that intigrates Semantic UI into React as properties, which feels more natural.
+Aui is a small glue component that integrates Semantic UI into React as properties, which feels more natural.
 
 Instead of many new components, all properties that === true are automatically translated into the className of each tag.
-Semantic Module and other semantic javascript is automatically called on things that need it, like dropdown and even api.
+Semantic Modules and other semantic javascript is automatically called on things that need it, like semantic's dropdowns, form validation, and even api.
 (don't forget to include semantic.css on your page!)
 
 ```js
-const React = require('React'),
+var
+	React = require('react'),
 	Aui = require('aui').Aui;
 
-export const Login = React.createClass({
+var Login = React.createClass({
+	events(event) {
+		console.log(event);
+		event.stopPropagation();
+		event.preventDefault();
+	},
 	render() {
+		var validation = [{
+			username: {
+				identifier: 'username',
+				rules: [
+					{ type: 'empty', prompt: 'Please enter a username' }
+				]
+			},
+			password: {
+				identifier: 'password',
+				rules: [
+					{ type: 'empty', prompt: 'Please enter a password' },
+					{ type: 'length[6]', prompt: 'Your password must be at least 6 characters' }
+				]
+			}
+		}, { onSuccess: this.events }];
 		return (
 			<Aui>
-				<form ui form>
-					<div ui large fluid icon input>
-						<input type="text" name="username" placeholder="username..." />
-						<i ui large user icon />
+				<form ui segment form={validation}>
+					<div tree fields>
+						<div field>
+							<div ui icon input>
+								<input placeholder="Username" name="username" type="text"/>
+								<i user icon/>
+							</div>
+						</div>
+						<div field>
+							<div ui icon input>
+								<input placeholder="Password" type="password" name="password"/>
+								<i privacy icon/>
+							</div>
+						</div>
+						<div field>
+							<div ui blue submit button>Login</div>
+						</div>
 					</div>
-					<div ui large fluid icon input>
-						<input type="password"	name="password" placeholder="password..." />
-						<i ui large privacy icon />
-					</div>
-					<div ui large white fluid button> Login </div>
 				</form>
 			</Aui>
 		);

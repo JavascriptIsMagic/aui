@@ -28,7 +28,7 @@ var Page = React.createClass({
 					<div ui divider/>
 					<h1 ui dividing header>Examples</h1>
 					<div ui items>
-						<Example title="Basic React Example" fiddle="reactjs/69z2wepo" />
+						<Example title="Simple Login Screen" fiddle="9tcqoyme" />
 					</div>
 				</div>
 			</Aui>

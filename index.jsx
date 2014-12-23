@@ -26,7 +26,9 @@ var Page = React.createClass({
 			<Aui>
 				<div ui basic segment>
 					<div ui divider/>
-					<h1 ui dividing header>Examples</h1>
+					<h1 ui dividing header>
+						<a href="https://github.com/javascriptismagic/aui">&lt;Aui/&gt;</a> Examples
+					</h1>
 					<div ui items>
 						<Example title="Simple Login Screen" fiddle="9tcqoyme/5" />
 						<Example title="Form Validation" fiddle="9jz1zkjy/1" />

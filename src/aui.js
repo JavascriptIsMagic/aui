@@ -1,7 +1,8 @@
 'use strict';
 var
-	jQuery = window.jQuery,
-	React = window.React || require('react/addons'),
+	global = global || window,
+	jQuery = global.jQuery,
+	React = global.React || require('react/addons'),
 	cloneWithProps = React.addons.cloneWithProps,
 	modules = [
 		"accordion",
@@ -115,14 +116,13 @@ var Semantic = React.createClass({
 	componentDidMount: function () {
 		this.applySettings();
 	},
-	shouldComponentUpdate: function () {
-		return false;
-	},
 	componentWillUnmount: function () {
 		this.applySettings('destroy');
 	},
 });
 
-module.exports = exports = Aui;
+if (!module) { var module = {}, exports; }
+module.exports = exports = global.Aui = Aui;
 exports.Aui = Aui;
 exports.Semantic = Semantic;
+if (jQuery) { exports.api = jQuery.fn.api; }

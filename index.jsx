@@ -9,11 +9,11 @@ var Page = React.createClass({
 				<div ui basic segment>
 					<h1 ui dividing header>Examples</h1>
 					<div ui items>
-						<div item>
-							<a header href="http://jsfiddle.net/reactjs/69z2wepo/">
+						<div ui item>
+							<a ui header href="http://jsfiddle.net/reactjs/69z2wepo/">
 								React's Hello World
 							</a>
-							<div description>
+							<div ui description>
 								<iframe width="100%" height="300" src="http://jsfiddle.net/reactjs/69z2wepo/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 							</div>
 						</div>

@@ -107,17 +107,32 @@ var Semantic = React.createClass({
 	},
 	applySettings: function (settings) {
 		var props = this.props.children.props,
-			moduleType = moduleSearch.exec(props.className)[0],
 			element = jQuery(this.getDOMNode());
-		settings = settings || props[moduleType];
-		settings = Array.isArray(settings) ? settings : [settings];
-		element[moduleType].apply(element, settings);
+		props.className.split(' ')
+			.filter(function (moduleType) { return moduleSearch.test(moduleType); })
+			.map(function (moduleType) {
+				var settings = props[moduleType];
+				settings = Array.isArray(settings) ? settings : [settings];
+				if (moduleType === 'form') {
+					if (!settings[1]) { settings[1] = {}; }
+					settings[1].onSuccess = props.onSubmit;
+				}
+				var options = settings[settings.length-1] = settings[settings.length-1] || {};
+				Object.keys(props)
+					.filter(function (key) { return /^on[A-Z]/.test(key); })
+					.map(function (callback) {
+						options[callback] = props[callback];
+					});
+				element[moduleType].apply(element, settings);
+			});
 	},
 	componentDidMount: function () {
 		this.applySettings();
 	},
 	componentWillUnmount: function () {
-		this.applySettings('destroy');
+		var props = this.props.children.props,
+			element = jQuery(this.getDOMNode());
+		jQuery(this.getDOMNode()).remove();
 	},
 });
 

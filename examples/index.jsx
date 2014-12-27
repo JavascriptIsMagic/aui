@@ -1,6 +1,7 @@
 var
 	React = window.React,
 	Aui = window.Aui;
+	examples = window.examples = [];
 
 var Example = React.createClass({
 	render: function () {
@@ -22,16 +23,13 @@ var Example = React.createClass({
 
 var Page = React.createClass({
 	render: function () {
+		document.title = '<Aui/> Examples';
 		return (
 			<Aui>
 				<div ui basic segment>
-					<div ui divider/>
-					<h1 ui dividing header>
-						<a href="https://github.com/javascriptismagic/aui">&lt;Aui/&gt;</a> Examples
-					</h1>
+					<h1 ui dividing huge header><a href="https://github.com/javascriptismagic/aui">{"<Aui/>"}</a> Examples</h1>
 					<div ui items>
-						<Example title="Simple Login Screen" fiddle="9tcqoyme/5" />
-						<Example title="Form Validation" fiddle="9jz1zkjy/1" />
+						<Example title="Hello <Aui/>" fiddle="javascriptismagic/ny1k5Ljj" />
 					</div>
 				</div>
 			</Aui>
@@ -39,12 +37,14 @@ var Page = React.createClass({
 	}
 });
 
-React.render((
-	<Aui>
-		<div ui page grid>
-			<div column>
-				<Page/>
+setTimeout(function () {
+	React.render((
+		<Aui>
+			<div ui page grid>
+				<div column>
+					<Page/>
+				</div>
 			</div>
-		</div>
-	</Aui>
-), document.body);
+		</Aui>
+	), document.body);
+}());

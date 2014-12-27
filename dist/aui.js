@@ -99,25 +99,61 @@ var Aui = React.createClass({
 });
 
 var Semantic = React.createClass({
-  propTypes: {
-    children: React.PropTypes.element.isRequired
-  },
+  propTypes: { children: React.PropTypes.element.isRequired },
+	getInitialState: function () { return { formData: {} } },
+	onFormInput: function (event) {
+		var formData = this.state.formData;
+		formData[event.target.name] = event.target.value;
+		this.setState({ formData: formData });
+	},
 	render: function () {
+		if (this.props.children.props.form) {
+			var onFormInput = this.props.children.props.onInput,
+				componentOnFormInput = this.onFormInput;
+			return cloneWithProps(this.props.children, {
+				onInput: function (event) {
+					componentOnFormInput.apply(this, arguments);
+					if (onFormInput) { onFormInput.apply(this, arguments); }
+				}
+			});
+		}
 		return this.props.children;
 	},
 	applySettings: function (settings) {
 		var props = this.props.children.props,
-			moduleType = moduleSearch.exec(props.className)[0],
-			element = jQuery(this.getDOMNode());
-		settings = settings || props[moduleType];
-		settings = Array.isArray(settings) ? settings : [settings];
-		element[moduleType].apply(element, settings);
+			element = jQuery(this.getDOMNode()),
+			formData = this.state.formData;
+		props.className.split(' ')
+			.filter(function (moduleType) { return moduleSearch.test(moduleType); })
+			.map(function (moduleType) {
+				var settings = props[moduleType];
+				settings = Array.isArray(settings) ? settings : [settings];
+				var options = settings[settings.length-1] = settings[settings.length-1] || {};
+				if (moduleType === 'form') {
+					if (!settings[1]) { settings[1] = {}; }
+					if (props.onSubmit) {
+						settings[1].onSuccess = function (event) {
+							event.data = formData;
+							props.onSubmit.apply(this, arguments);
+						};
+					}
+					options = settings[1];
+				}
+				Object.keys(props)
+					.filter(function (key) { return /^on[A-Z]/.test(key); })
+					.map(function (callback) {
+						options[callback] = props[callback];
+					});
+				element[moduleType].apply(element, settings);
+			});
 	},
 	componentDidMount: function () {
 		this.applySettings();
 	},
 	componentWillUnmount: function () {
-		this.applySettings('destroy');
+		var props = this.props.children.props,
+			element = jQuery(this.getDOMNode());
+		jQuery(this.getDOMNode()).remove();
 	},
 });
 

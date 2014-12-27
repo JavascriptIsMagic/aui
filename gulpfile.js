@@ -1,6 +1,19 @@
 var
 	fs = require('fs'),
-	gulp = require('gulp');
+	gulp = require('gulp'),
+	uglify = require('gulp-uglify'),
+	rename = require('gulp-rename'),
+	sourcemaps = require('gulp-sourcemaps');
+
+gulp.task('aui:build', function() {
+  gulp.src(__dirname + '/src/aui.js')
+    .pipe(gulp.dest(__dirname + '/dist'))
+		.pipe(rename({suffix: '.min'}))
+    .pipe(sourcemaps.init())
+			.pipe(uglify())
+		.pipe(sourcemaps.write(__dirname + '/dist/', { addComment: false }))
+    .pipe(gulp.dest(__dirname + '/dist'))
+});
 
 function listSemanticModules() {
 	var modules = [];

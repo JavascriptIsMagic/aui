@@ -1,4 +1,4 @@
 'use strict';
 
 
-module.exports = require('./src/aui');
+module.exports = require('./dist/aui');

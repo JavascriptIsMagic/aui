@@ -1,6 +1,6 @@
 {
   "name": "aui",
-  "main": "index.js",
+  "main": "dist/aui.js",
   "version": "0.4.1",
   "description": "<Aui/> = React + Semantic UI for Alicorns.",
   "keywords": [
@@ -31,10 +31,17 @@
     "type": "git",
     "url": "https://github.com/javascriptismagic/aui.git"
   },
-  "author": "Brian <javascriptismagic@gmail.com>",
+  "authors": [
+    "Brian <javascriptismagic@gmail.com>"
+  ],
   "license": "Public Domain (Unlicense)",
   "bugs": {
     "url": "https://github.com/javascriptismagic/aui/issues"
   },
-  "homepage": "https://github.com/javascriptismagic/aui/"
+  "homepage": "https://github.com/javascriptismagic/aui/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+  ]
 }

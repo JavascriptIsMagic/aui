@@ -98,6 +98,12 @@ var Aui = React.createClass({
 	},
 });
 
+/**
+	@class Semantic (internal)
+	<Semantic/> is a wrapper component that manages Semantic Modules
+	<Aui> component automatically wraps elements with <semantic/> as needed,
+	intended mostly for internal use by Aui, and is not typically used directly.
+*/
 var Semantic = React.createClass({
   propTypes: { children: React.PropTypes.element.isRequired },
 	getInitialState: function () { return { formData: {} } },

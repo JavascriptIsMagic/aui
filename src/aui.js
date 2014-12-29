@@ -84,7 +84,21 @@ var Aui = React.createClass({
 					};
 				if (Element.key) { props.key = Element.key; }
 				if (Element.ref) { props.ref = Element.ref; }
-				if (Element.props.children) { props.children = query(Element.props.children); }
+				if (Element.props.children) {
+					props.children = query(Element.props.children);
+					if (/\bform\b/.test(props.className) || /\bform\b/.test(Element.props.className)) {
+						props.children = (
+							Array.isArray(props.children) ?
+								props.children :
+								[props.children]);
+						if (Element.props.onSubmit) {
+							props.onFormSubmit = Element.props.onSubmit;
+							props.onSubmit = null;
+						}
+						// normalize form submits:
+						props.children.unshift(React.createElement('input', { type: 'submit', style: { display: 'none' } }));
+					}
+				}
 				Element = cloneWithProps(Element, props);
 				if (jQuery &&
 						moduleSearch.test(Element.props.className) &&
@@ -106,7 +120,6 @@ var Semantic = React.createClass({
 		setTimeout(function () {
 			var formData = this.state.formData;
 			formData[target.name] = target.value;
-			console.log(target.name, target.value);
 			this.setState({ formData: formData });
 		}.bind(this));
 	},
@@ -126,7 +139,7 @@ var Semantic = React.createClass({
 		}
 		return this.props.children;
 	},
-	applySettings: function (settings) {
+	componentDidMount: function () {
 		var
 			self = this,
 			props = this.props.children.props,
@@ -162,10 +175,14 @@ var Semantic = React.createClass({
 				}
 				if (moduleType === 'form') {
 					if (!settings[1]) { settings[1] = {}; }
-					if (props.onSubmit) {
+					if (props.onFormSubmit) {
 						settings[1].onSuccess = function (event) {
-							event.data = self.state.formData;
-							props.onSubmit.apply(this, arguments);
+							if (event.isTrigger) {
+								event.data = self.state.formData;
+								props.onFormSubmit.apply(this, arguments);
+							} else {
+								event.preventDefault();
+							}
 						};
 					}
 					options = settings[1];
@@ -186,7 +203,6 @@ var Semantic = React.createClass({
 							if (!/^on(Input|Change)$/.test(callback)) {
 								options[callback] = props[callback];
 							}
-							console.log(callback, props[callback]);
 							element.data(callback, props[callback]);
 						});
 					if (moduleType === 'form') { element.data('onInput', bothFormOnInput); }
@@ -211,9 +227,6 @@ var Semantic = React.createClass({
 					});
 				}
 			});
-	},
-	componentDidMount: function () {
-		this.applySettings();
 	},
 	componentWillUnmount: function () {
 		jQuery(this.getDOMNode()).remove();

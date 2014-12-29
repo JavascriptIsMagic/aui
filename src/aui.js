@@ -228,6 +228,27 @@ var Semantic = React.createClass({
 				}
 			});
 	},
+	behaviors: {},
+	shouldComponentUpdate: function () {
+		var
+			self = this,
+			props = this.props.children.props,
+			element = jQuery(this.getDOMNode());
+		props.className.split(' ')
+			.filter(function (moduleType) { return moduleSearch.test(moduleType); })
+			.map(function (moduleType) {
+				var behavior =
+					(Array.isArray(props[moduleType]) ?
+						props[moduleType] :
+						[props[moduleType]]);
+				if (typeof behavior[0] === 'string' && self.behaviors[moduleType] !== JSON.stringify(behavior)) {
+					self.behaviors[moduleType] = JSON.stringify(behavior);
+					console.log(moduleType, behavior);
+					element[moduleType].apply(element, behavior);
+				}
+			});
+		return true;
+	},
 	componentWillUnmount: function () {
 		jQuery(this.getDOMNode()).remove();
 	},

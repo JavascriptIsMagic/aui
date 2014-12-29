@@ -65,6 +65,7 @@ var
 	```
 */
 var Aui = React.createClass({
+	displayName: 'Aui',
   propTypes: {
     children: React.PropTypes.element.isRequired
   },
@@ -113,6 +114,7 @@ var Aui = React.createClass({
 });
 
 var Semantic = React.createClass({
+	displayName: 'Semantic',
   propTypes: { children: React.PropTypes.element.isRequired },
 	getInitialState: function () { return { formData: {} } },
 	onFormInput: function (event) {
@@ -142,9 +144,9 @@ var Semantic = React.createClass({
 	componentDidMount: function () {
 		var
 			self = this,
-			props = this.props.children.props,
-			element = jQuery(this.getDOMNode()),
-			bothFormOnInput = this.bothFormOnInput;
+			props = self.props.children.props,
+			element = jQuery(self.getDOMNode()),
+			bothFormOnInput = self.bothFormOnInput;
 		function noop() {};
 		function AuiSyntheticSyntheticEvent($target) {
 			var target = (
@@ -229,11 +231,11 @@ var Semantic = React.createClass({
 			});
 	},
 	behaviors: {},
-	shouldComponentUpdate: function () {
+	componentWillReceiveProps: function (props) {
+		props = props.children.props;
 		var
 			self = this,
-			props = this.props.children.props,
-			element = jQuery(this.getDOMNode());
+			element = jQuery(self.getDOMNode());
 		props.className.split(' ')
 			.filter(function (moduleType) { return moduleSearch.test(moduleType); })
 			.map(function (moduleType) {
@@ -243,11 +245,9 @@ var Semantic = React.createClass({
 						[props[moduleType]]);
 				if (typeof behavior[0] === 'string' && self.behaviors[moduleType] !== JSON.stringify(behavior)) {
 					self.behaviors[moduleType] = JSON.stringify(behavior);
-					console.log(moduleType, behavior);
 					element[moduleType].apply(element, behavior);
 				}
 			});
-		return true;
 	},
 	componentWillUnmount: function () {
 		jQuery(this.getDOMNode()).remove();

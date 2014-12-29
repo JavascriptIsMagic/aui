@@ -22,6 +22,10 @@ gulp.task('aui:build', function() {
     .pipe(gulp.dest(__dirname + '/dist'))
 });
 
+gulp.task('aui:watch', function () {
+	gulp.watch([__dirname + '/src/**/*'], ['aui:build']);
+});
+
 function listSemanticModules() {
 	var modules = [];
 	('' + fs.readFileSync(require.resolve('semantic-ui/dist/semantic')))

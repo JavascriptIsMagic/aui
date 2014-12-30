@@ -31,6 +31,54 @@ var
 		"visit"
 	],
 	moduleSearch = new RegExp('\\b(' + modules.join('|') + ')\\b', 'i');
+function noop() {}
+
+var AuiMixin = {
+	getInitialState: function () { return {}; },
+	componentWillMount: function () {
+		var self = this;
+		/**
+			@function AuiMixin.behavior(name, value)
+			@example <div ui button onClick={this.behavior('name', ['behavior', 'syntax'])} />
+			This function helps you call Samantic UI's behavior syntax using a state variable.
+			this.behavior returns a function you can easily bind to a callback such as onClick,
+			this.behavior will call this.setState with name you specify, and then immediately after call setState again, ensuring you will be able to trigger the behavior each time the handler is called.
+		*/
+		this.behavior = function (name, value) {
+			return behavior.bind(this, name, value);
+		}.bind(this);
+		function behavior(name, value, callback) {
+			var state = {};
+			state[name] = value;
+			self.setState(state, function () {
+				state[name] = [];
+				self.setState(state, callback);
+			});
+		}
+		this.behaviors = function (sequence) {
+			var behaviors = (
+				Array.isArray(sequence) ?
+					(sequence
+						.filter(function (behavior) {
+							return (Array.isArray(behavior) && typeof behavior[0] === 'string');
+						})
+						.reduce(function (behaviors, behavior) {
+							var name = behavior.unshift();
+							behaviors[name] = behaviors[name] || [];
+							behaviors[name].push(behavior);
+						}, { })) : sequence);
+			return (Object.keys(behaviors)
+				.reduce(function (next, name) {
+					return (behaviors[name]
+						.reduce(function (next, behaviorState) {
+							return function () {
+								behavior(name, behaviorState, next);
+							}.bind(this);
+						}.bind(this), next));
+				}.bind(this), noop));
+		}.bind(this);
+	},
+}
 
 /**
 	@class Aui
@@ -147,7 +195,6 @@ var Semantic = React.createClass({
 			props = self.props.children.props,
 			element = jQuery(self.getDOMNode()),
 			bothFormOnInput = self.bothFormOnInput;
-		function noop() {};
 		function AuiSyntheticSyntheticEvent($target) {
 			var target = (
 				$target.filter('select,input')[0] ||
@@ -230,7 +277,6 @@ var Semantic = React.createClass({
 				}
 			});
 	},
-	behaviors: {},
 	componentWillReceiveProps: function (props) {
 		props = props.children.props;
 		var
@@ -243,8 +289,7 @@ var Semantic = React.createClass({
 					(Array.isArray(props[moduleType]) ?
 						props[moduleType] :
 						[props[moduleType]]);
-				if (typeof behavior[0] === 'string' && self.behaviors[moduleType] !== JSON.stringify(behavior)) {
-					self.behaviors[moduleType] = JSON.stringify(behavior);
+				if (typeof behavior[0] === 'string') {
 					element[moduleType].apply(element, behavior);
 				}
 			});
@@ -257,5 +302,6 @@ var Semantic = React.createClass({
 if (!module) { var module = {}, exports; }
 module.exports = exports = global.Aui = Aui;
 exports.Aui = Aui;
+exports.Mixin = exports.AuiMixin = AuiMixin;
 exports.Semantic = Semantic;
 if (jQuery) { exports.api = jQuery.fn.api; }

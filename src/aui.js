@@ -34,6 +34,11 @@ var
 	moduleSearch = new RegExp('\\b(' + modules.join('|') + ')\\b', 'i');
 function noop() {}
 
+// Fix iOS ignoring onClick handlers
+if (/ios|iphone|ipad|ipod/i.test(navagator.userAgent)) {
+	jQuery('<style>*{cursor:pointer!important}</style>').appendTo('head');
+}
+
 var AuiMixin = {
 	getInitialState: function () { return {}; },
 	componentWillMount: function () {

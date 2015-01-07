@@ -222,6 +222,7 @@ var Semantic = React.createClass({
 				var settings = props[moduleType];
 				if (!settings) { return; }
 				settings = Array.isArray(settings) ? settings : [settings];
+				if (settings[0] === 'settings') { settings.shift(); }
 				var options = settings[settings.length-1] = settings[settings.length-1] || {};
 				if (options === true) {
 					options = settings[settings.length-1] = {};

@@ -261,14 +261,16 @@ var Semantic = React.createClass({
 						});
 					if (moduleType === 'form') { element.data('onInput', bothFormOnInput); }
 					options.onChange = function (_, value, $target) {
-						if (onChange) { onChange.apply(this, arguments); }
-						if (props.onInput) { props.onInput.call(this, new AuiSyntheticSyntheticEvent($target)); }
-						if (props.onChange) { props.onChange.call(this, new AuiSyntheticSyntheticEvent($target)); }
-						var form = $target.parents('.form:first');
-						if (form[0]) {
-							if (form.data('onChange')) { form.data('onChange').call(this, new AuiSyntheticSyntheticEvent($target)); }
-							if (form.data('onInput')) { form.data('onInput').call(this, new AuiSyntheticSyntheticEvent($target)); }
-						}
+						setTimeout(function () {
+							if (onChange) { onChange.apply(this, arguments); }
+							if (props.onInput) { props.onInput.call(this, new AuiSyntheticSyntheticEvent($target)); }
+							if (props.onChange) { props.onChange.call(this, new AuiSyntheticSyntheticEvent($target)); }
+							var form = $target.parents('.form:first');
+							if (form[0]) {
+								if (form.data('onChange')) { form.data('onChange').call(this, new AuiSyntheticSyntheticEvent($target)); }
+								if (form.data('onInput')) { form.data('onInput').call(this, new AuiSyntheticSyntheticEvent($target)); }
+							}
+						}.bind(this, arguments));
 					};
 				}
 				element[moduleType].apply(element, settings);

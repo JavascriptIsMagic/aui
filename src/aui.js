@@ -1,4 +1,5 @@
 'use strict';
+
 var
 	global = global || window,
 	jQuery = global.jQuery,
@@ -123,7 +124,8 @@ var Aui = React.createClass({
 			if (	React.isValidElement(Element) &&
 						Element.props &&
 						Element.props.noaui !== true &&
-						Element.type !== Semantic) {
+						Element.type !== Semantic &&
+						Element.type !== Aui) {
 				var
 					props = {
 						className: Object.keys(Element.props)
@@ -151,6 +153,8 @@ var Aui = React.createClass({
 				Element = cloneWithProps(Element, props);
 				if (jQuery &&
 						moduleSearch.test(Element.props.className) &&
+						// prevent <i dropdown icon /> from being wrapped
+						!/\bicon\b/.test(Element.props.className) &&
 						jQuery.fn[moduleSearch.exec(Element.props.className)[0]]) {
 					return React.createElement(Semantic, { }, Element);
 				}
@@ -290,13 +294,12 @@ var Semantic = React.createClass({
 						props[moduleType] :
 						[props[moduleType]]);
 				if (typeof behavior[0] === 'string') {
+					if (behavior[0] === 'settings') { behavior.shift(); }
 					element[moduleType].apply(element, behavior);
 				}
 			});
 	},
-	componentWillUnmount: function () {
-		jQuery(this.getDOMNode()).remove();
-	},
+	shouldComponentUpdate: function () { return false; }
 });
 
 if (!module) { var module = {}, exports; }

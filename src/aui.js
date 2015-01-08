@@ -35,7 +35,7 @@ var
 function noop() {}
 
 // Fix iOS ignoring onClick handlers
-if (/ios|iphone|ipad|ipod/i.test(navagator.userAgent)) {
+if (/ios|iphone|ipad|ipod/i.test((navigator||{}).userAgent)) {
 	jQuery('<style>*{cursor:pointer!important}</style>').appendTo('head');
 }
 

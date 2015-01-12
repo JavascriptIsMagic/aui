@@ -306,8 +306,8 @@ var Semantic = React.createClass({
 					element[moduleType].apply(element, behavior);
 				}
 			});
-	},
-	shouldComponentUpdate: function () { return false; }
+	}
+	//shouldComponentUpdate: function () { return false; }
 });
 
 if (!module) { var module = {}, exports; }

@@ -14,55 +14,29 @@ var
   React = require('react'),
   Aui = require('aui').Aui;
 
-var Login = React.createClass({
-  getInitialState() {
-    return {
-      username: '',
-      password: ''
-    }
+var LoginForm = React.createClass({
+  submit: function (event) {
+    console.log(event.data);
+		// { username: '...', password: '...' }
   },
-  input(event) {
-    var state = {};
-    state[event.target.name] = event.target.value;
-    this.setState(state);
-  },
-  submit(event) {
-    console.log(event, this.state);
-    event.stopPropagation();
-    event.preventDefault();
-  },
-  render() {
-    var validation = [{
-      username: {
-        identifier: 'username',
-        rules: [
-          { type: 'empty', prompt: 'Please enter a username' }
-        ]
-      },
-      password: {
-        identifier: 'password',
-        rules: [
-          { type: 'empty', prompt: 'Please enter a password' },
-          { type: 'length[6]', prompt: 'Your password must be at least 6 characters' }
-        ]
-      }
-    }];
+  render: function () {
     return (
       <Aui>
-        <form ui segment form={validation} onSubmit={this.submit}>
+        <form ui segment form={this.validation} onSubmit={this.submit}>
           <div tree fields>
             <div field>
               <div ui icon input>
-                <input placeholder="Username" name="username" type="text" onInput={this.input}/>
+                <input type="text" name="username" placeholder="Username"/>
                 <i user icon/>
               </div>
             </div>
             <div field>
               <div ui icon input>
-                <input placeholder="Password" type="password" name="password" onInput={this.input}/>
+                <input type="password" name="password" placeholder="Password"/>
                 <i privacy icon/>
               </div>
             </div>
+						<div ui error message/>
             <div field>
               <div ui blue submit button>Login</div>
             </div>
@@ -70,14 +44,29 @@ var Login = React.createClass({
         </form>
       </Aui>
     );
-  }
+  },
+	validation: {
+		username: {
+			identifier: 'username',
+			rules: [
+				{ type: 'empty', prompt: 'Please enter a username' }
+			]
+		},
+		password: {
+			identifier: 'password',
+			rules: [
+				{ type: 'empty', prompt: 'Please enter a password' },
+				{ type: 'length[6]', prompt: 'Your password must be at least 6 characters' }
+			]
+		}
+	}
 });
 
 React.render(
   <Aui>
     <div ui page grid>
       <div column>
-        <Login/>
+        <LoginForm/>
       </div>
     </div>
   </Aui>,
@@ -94,16 +83,17 @@ The dom should turn out something like this after render:
         <div class="tree fields">
           <div class="field">
             <div class="ui icon input">
-              <input placeholder="Username" name="username" type="text" />
+              <input type="text" name="username" placeholder="Username" />
               <i class="user icon" />
             </div>
           </div>
           <div class="field">
             <div class="ui icon input">
-              <input placeholder="Password" type="password" name="password" />
+              <input type="password" name="password" placeholder="Password" />
               <i class="privacy icon" />
             </div>
           </div>
+					<div class="ui error message"></div>
           <div class="field">
             <div class="ui blue submit button">Login</div>
           </div>

@@ -30,6 +30,7 @@ var Page = React.createClass({
 					<h1 ui dividing huge header><a href="https://github.com/javascriptismagic/aui">{"<Aui/>"}</a> Examples</h1>
 					<div ui items>
 						<Example title="Hello <Aui/>" fiddle="javascriptismagic/ny1k5Ljj" />
+						<Example title="Simple Login Form" fiddle="javascriptismagic/7q93rw3c" />
 					</div>
 				</div>
 			</Aui>

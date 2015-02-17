@@ -11,96 +11,98 @@ Semantic Modules and other semantic javascript is automatically called on things
 
 ```js
 var
-  React = require('react'),
-  Aui = require('aui').Aui;
+ React = require('react'),
+ Aui = require('aui').Aui;
 
 var LoginForm = React.createClass({
-  submit: function (event) {
-    console.log(event.data);
-		// { username: '...', password: '...' }
+ submit: function (event) {
+  console.log(event.data);
+  alert(JSON.stringify(event.data, null, 4));
+ },
+ render: function () {
+  return (
+  <Aui>
+   <form ui segment form={this.validation} onSubmit={this.submit}>
+   <h1 ui header>{document.title} Login:</h1>
+   <div field>
+    <div ui icon input>
+     <input type="text" name="username" placeholder="Username"/>
+     <i user icon/>
+    </div>
+   </div>
+   <div field>
+    <div ui icon input>
+     <input type="password" name="password" placeholder="Password"/>
+     <i privacy icon/>
+    </div>
+   </div>
+   <div ui error message/>
+   <div ui right aligned basic segment>
+    <div field>
+     <div ui blue submit button>Login</div>
+    </div>
+   </div>
+   </form>
+  </Aui>
+  );
+ },
+ validation: {
+  username: {
+   identifier: 'username',
+   rules: [
+    { type: 'empty', prompt: 'Please enter a username' }
+   ]
   },
-  render: function () {
-    return (
-      <Aui>
-        <form ui segment form={this.validation} onSubmit={this.submit}>
-          <div tree fields>
-            <div field>
-              <div ui icon input>
-                <input type="text" name="username" placeholder="Username"/>
-                <i user icon/>
-              </div>
-            </div>
-            <div field>
-              <div ui icon input>
-                <input type="password" name="password" placeholder="Password"/>
-                <i privacy icon/>
-              </div>
-            </div>
-						<div ui error message/>
-            <div field>
-              <div ui blue submit button>Login</div>
-            </div>
-          </div>
-        </form>
-      </Aui>
-    );
-  },
-	validation: {
-		username: {
-			identifier: 'username',
-			rules: [
-				{ type: 'empty', prompt: 'Please enter a username' }
-			]
-		},
-		password: {
-			identifier: 'password',
-			rules: [
-				{ type: 'empty', prompt: 'Please enter a password' },
-				{ type: 'length[6]', prompt: 'Your password must be at least 6 characters' }
-			]
-		}
-	}
+  password: {
+   identifier: 'password',
+   rules: [
+    { type: 'empty', prompt: 'Please enter a password' },
+    { type: 'length[6]', prompt: 'Your password must be at least 6 characters' }
+   ]
+  }
+ }
 });
 
 React.render(
-  <Aui>
-    <div ui page grid>
-      <div column>
-        <LoginForm/>
-      </div>
-    </div>
-  </Aui>,
-  document.body);
+ <Aui>
+  <div ui page grid>
+   <div column>
+    <LoginForm/>
+   </div>
+  </div>
+ </Aui>,
+ document.body);
 ```
 
-The dom should turn out something like this after render:
-
+This will result in something like this after render:
 ```html
 <body>
-  <div class="ui page grid">
-    <div class="column">
-      <form class="ui segment form">
-        <div class="tree fields">
-          <div class="field">
-            <div class="ui icon input">
-              <input type="text" name="username" placeholder="Username" />
-              <i class="user icon" />
-            </div>
-          </div>
-          <div class="field">
-            <div class="ui icon input">
-              <input type="password" name="password" placeholder="Password" />
-              <i class="privacy icon" />
-            </div>
-          </div>
-					<div class="ui error message"></div>
-          <div class="field">
-            <div class="ui blue submit button">Login</div>
-          </div>
-        </div>
-      </form>
+ <div class="ui page grid">
+  <div class="column">
+   <form class="ui segment form">
+     <h1 class="ui header">Login:</h1>
+     <div class="field">
+      <div class="ui icon input">
+       <input type="text" name="username" placeholder="Username" />
+       <i class="user icon" />
+      </div>
+     </div>
+     <div class="field">
+      <div class="ui icon input">
+       <input type="password" name="password" placeholder="Password" />
+       <i class="privacy icon" />
+      </div>
+     </div>
+     <div class="ui error message"></div>
+     <div class="ui right aligned basic segment">
+      <div class="field">
+       <div class="ui blue submit button">Login</div>
+      </div>
+     </div>
     </div>
+   </form>
   </div>
+ </div>
 </body>
 ```
 

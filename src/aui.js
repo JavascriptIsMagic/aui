@@ -295,7 +295,8 @@ var Semantic = React.createClass({
 							element.data(callback, props[callback]);
 						});
 					if (moduleType === 'form') { element.data('onInput', bothFormOnInput); }
-					options.onChange = function (_, value, $target) {
+					options.onChange = function (_, value) {
+						var $target = jQuery(this);
 						setTimeout(function () {
 							if (onChange) { onChange.apply(this, arguments); }
 							if (props.onInput) { props.onInput.call(this, new AuiSyntheticSyntheticEvent($target)); }

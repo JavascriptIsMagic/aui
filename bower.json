@@ -1,7 +1,7 @@
 {
   "name": "aui",
   "main": "dist/aui.js",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "description": "<Aui/> = React + Semantic UI for Alicorns.",
   "keywords": [
     "react",

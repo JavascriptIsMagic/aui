@@ -1,6 +1,7 @@
 'use strict';
 
 var
+	toArray = Function.prototype.call.bind(Array.prototype.slice),
 	global = global || window,
 	jQuery = global.jQuery,
 	React = global.React || require('react/addons'),
@@ -31,7 +32,36 @@ var
 		"visibility",
 		"visit"
 	],
-	moduleSearch = new RegExp('\\b(' + modules.join('|') + ')\\b', 'i');
+	moduleSearch;
+function escapeRegExp(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+function uniqueStringArray(stringArray, filter) {
+	var unique = {};
+	stringArray.forEach(function (string) {
+		unique[string] = true;
+	});
+	return Object.keys(unique);
+}
+function compileModuleSearch() {
+	moduleSearch = new RegExp('\\b(' +
+			modules.map(function (module) {
+				return escapeRegExp(module);
+			}).join('|')
+		+ ')\\b', 'i')
+}
+compileModuleSearch();
+function add$fn(moduleNames) {
+	if (!Array.isArray(moduleNames)) { moduleNames = [moduleNames]; }
+	modules = uniqueStringArray(modules.concat(moduleNames));
+	compileModuleSearch();
+	return this;
+}
+function remove$fn(filter) {
+	modules = uniqueStringArray(modules.filter(filter));
+	compileModuleSearch();
+	return this;
+}
 function noop() {}
 
 // Fix iOS ignoring onClick handlers
@@ -265,7 +295,8 @@ var Semantic = React.createClass({
 							element.data(callback, props[callback]);
 						});
 					if (moduleType === 'form') { element.data('onInput', bothFormOnInput); }
-					options.onChange = function (_, value, $target) {
+					options.onChange = function (_, value) {
+						var $target = jQuery(this);
 						setTimeout(function () {
 							if (onChange) { onChange.apply(this, arguments); }
 							if (props.onInput) { props.onInput.call(this, new AuiSyntheticSyntheticEvent($target)); }
@@ -315,4 +346,5 @@ module.exports = exports = global.Aui = Aui;
 exports.Aui = Aui;
 exports.Mixin = exports.AuiMixin = AuiMixin;
 exports.Semantic = Semantic;
+exports.add$fn = add$fn;
 if (jQuery) { exports.api = jQuery.fn.api; }

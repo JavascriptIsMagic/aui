@@ -88,7 +88,7 @@ var AuiMixin = {
 			state[name] = value;
 			self.setState(state, function () {
 				state[name] = [];
-				self.setState(state, callback);
+				self.setState(state, callback instanceof Function ? callback : noop);
 			});
 		}
 		this.behaviors = function (sequence) {
@@ -137,7 +137,7 @@ var AuiMixin = {
 		}
 	});
 	React.render(<Page/>, document.body);
-	
+
 	// The dom should look something like this:
 	<body>
 		<div class="ui page grid">

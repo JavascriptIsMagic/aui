@@ -19,7 +19,6 @@
   "dependencies": {
     "jquery": ">=1.8",
     "react": "0.13",
-    "run-sequence": "^1.0.2",
     "semantic-ui": "1"
   },
   "devDependencies": {
@@ -30,7 +29,8 @@
     "gulp-rename": "1",
     "gulp-sourcemaps": "1",
     "gulp-tag-version": "1",
-    "gulp-uglify": "1"
+    "gulp-uglify": "1",
+    "run-sequence": "1"
   },
   "repository": {
     "type": "git",

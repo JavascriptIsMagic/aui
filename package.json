@@ -1,7 +1,7 @@
 {
   "name": "aui",
   "main": "index.js",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "<Aui/> = React + Semantic UI for Alicorns.",
   "keywords": [
     "react",
@@ -17,9 +17,10 @@
     "magic"
   ],
   "dependencies": {
+    "jquery": ">=1.8",
     "react": "0.13",
-    "semantic-ui": "1",
-    "jquery": ">=1.8"
+    "run-sequence": "^1.0.2",
+    "semantic-ui": "1"
   },
   "devDependencies": {
     "gulp": "3",

@@ -215,7 +215,7 @@ var Semantic = React.createClass({
               findFormData(data, element);
             });
           } else {
-            findFormData(data, element);
+            findFormData(data, element.props.children);
           }
         }
       }

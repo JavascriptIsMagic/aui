@@ -205,21 +205,23 @@ var Semantic = React.createClass({
   propTypes: { children: React.PropTypes.element.isRequired },
   getInitialState: function () {
     function findFormData(data, element) {
-      if (element.props.children) {
-        if (Array.isArray(element.props.children)) {
-          element.props.children.forEach(function (element) {
-            findFormData.apply(this, data, element);
-          }.bind(this));
-        } else {
-          findFormData.apply(this, data, element);
+      if (element.props) {
+        if (element.props.name && (element.props.value || element.props.defaultValue)) {
+          data[element.props.name] = element.props.value || element.props.defaultValue;
         }
-      }
-      if (element.props.name && (element.props.value || element.props.defaultValue)) {
-        data[element.props.name] = element.props.value || element.props.defaultValue;
+        if (element.props.children) {
+          if (Array.isArray(element.props.children)) {
+            element.props.children.forEach(function (element) {
+              findFormData(data, element);
+            });
+          } else {
+            findFormData(data, element);
+          }
+        }
       }
       return data
     }
-    return { formData: findFormData.apply(this, {}, this) }
+    return { formData: findFormData({}, this) }
   },
   onFormInput: function (event) {
     var target = event.target;

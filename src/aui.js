@@ -203,7 +203,24 @@ var Aui = React.createClass({
 var Semantic = React.createClass({
   displayName: 'Semantic',
   propTypes: { children: React.PropTypes.element.isRequired },
-  getInitialState: function () { return { formData: {} } },
+  getInitialState: function () {
+    function findFormData(data, element) {
+      if (element.props.children) {
+        if (Array.isArray(element.props.children)) {
+          element.props.children.forEach(function (element) {
+            findFormData.apply(this, data, element);
+          }.bind(this));
+        } else {
+          findFormData.apply(this, data, element);
+        }
+      }
+      if (element.props.name && (element.props.value || element.props.defaultValue)) {
+        data[element.props.name] = element.props.value || element.props.defaultValue;
+      }
+      return data
+    }
+    return { formData: findFormData.apply(this, {}, this) }
+  },
   onFormInput: function (event) {
     var target = event.target;
     setTimeout(function () {

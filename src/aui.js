@@ -2,6 +2,7 @@
 
 var
   toArray = Function.prototype.call.bind(Array.prototype.slice),
+  hasOwn = {}.hasOwnProperty,
   global = global || window,
   jQuery = global.jQuery,
   React = global.React || require('react/addons'),
@@ -193,6 +194,9 @@ var Aui = React.createClass({
             jQuery.fn[moduleSearch.exec(Element.props.className)[0]]) {
           return React.createElement(Semantic, { }, Element);
         }
+        if (jQuery && Element.props.name) {
+          return React.createElement(Semantic, { }, Element);
+        }
       }
       return Element;
     };
@@ -200,34 +204,35 @@ var Aui = React.createClass({
   },
 });
 
+
+function AuiSyntheticSyntheticEvent($target, element) {
+  var target = (
+    $target.filter('select,input')[0] ||
+    $target.parents('.dropdown:first').find('select,input')[0] ||
+    $target[0] ||
+    element[0]);
+  this.type = 'input';
+  this.timeStamp = Date.now();
+  this.target = target;
+  this.preventDefault =
+  this.isPersistent =
+  this.isDefaultPrevented =
+  this.isPropagationStopped =
+  this.destructor =
+  this.spotPropagation = noop;
+};
+
 var Semantic = React.createClass({
   displayName: 'Semantic',
   propTypes: { children: React.PropTypes.element.isRequired },
   getInitialState: function () {
-    function findFormData(data, element) {
-      if (element.props) {
-        if (element.props.name && (element.props.value || element.props.defaultValue)) {
-          data[element.props.name] = element.props.value || element.props.defaultValue;
-        }
-        if (element.props.children) {
-          if (Array.isArray(element.props.children)) {
-            element.props.children.forEach(function (element) {
-              findFormData(data, element);
-            });
-          } else {
-            findFormData(data, element.props.children);
-          }
-        }
-      }
-      return data
-    }
-    return { formData: findFormData({}, this) }
+    return { formData: {} }
   },
   onFormInput: function (event) {
     var target = event.target;
     setTimeout(function () {
       var formData = this.state.formData;
-      formData[target.name] = target.value;
+      formData[target.name] = target.value || target.setValue || target.defaultValue;
       this.setState({ formData: formData });
     }.bind(this));
   },
@@ -253,22 +258,6 @@ var Semantic = React.createClass({
       props = self.props.children.props,
       element = jQuery(self.getDOMNode()),
       bothFormOnInput = self.bothFormOnInput;
-    function AuiSyntheticSyntheticEvent($target) {
-      var target = (
-        $target.filter('select,input')[0] ||
-        $target.parents('.dropdown:first').find('select,input')[0] ||
-        $target[0] ||
-        element[0]);
-      this.type = 'input';
-      this.timeStamp = Date.now();
-      this.target = target;
-      this.preventDefault =
-      this.isPersistent =
-      this.isDefaultPrevented =
-      this.isPropagationStopped =
-      this.destructor =
-      this.spotPropagation = noop;
-    };
     if (props.name) { element.attr('data-name', props.name); }
     props.className.split(' ')
       .filter(function (moduleType) { return moduleSearch.test(moduleType); })
@@ -285,11 +274,13 @@ var Semantic = React.createClass({
           if (!settings[1]) { settings[1] = {}; }
           if (props.onFormSubmit) {
             settings[1].onSuccess = function (event) {
-              if (event.isTrigger) {
-                event.data = self.state.formData;
-                props.onFormSubmit.apply(this, arguments);
-              } else {
-                event.preventDefault();
+              if (event) {
+                if (event.isTrigger) {
+                  event.data = JSON.parse(JSON.stringify(self.state.formData));
+                  props.onFormSubmit.apply(this, arguments);
+                } else {
+                  event.preventDefault();
+                }
               }
             };
           }
@@ -318,24 +309,35 @@ var Semantic = React.createClass({
             var $target = jQuery(this);
             setTimeout(function () {
               if (onChange) { onChange.apply(this, arguments); }
-              if (props.onInput) { props.onInput.call(this, new AuiSyntheticSyntheticEvent($target)); }
-              if (props.onChange) { props.onChange.call(this, new AuiSyntheticSyntheticEvent($target)); }
+              if (props.onInput) { props.onInput.call(this, new AuiSyntheticSyntheticEvent($target, element)); }
+              if (props.onChange) { props.onChange.call(this, new AuiSyntheticSyntheticEvent($target, element)); }
               var form = $target.parents('.form:first');
               if (form[0]) {
-                if (form.data('onChange')) { form.data('onChange').call(this, new AuiSyntheticSyntheticEvent($target)); }
-                if (form.data('onInput')) { form.data('onInput').call(this, new AuiSyntheticSyntheticEvent($target)); }
+                if (form.data('onChange')) { form.data('onChange').call(this, new AuiSyntheticSyntheticEvent($target, element)); }
+                if (form.data('onInput')) { form.data('onInput').call(this, new AuiSyntheticSyntheticEvent($target, element)); }
               }
             }.bind(this, arguments));
           };
         }
         element[moduleType].apply(element, settings);
         if (props.name) {
+          console.log('didmount:set value',
+            this.props.name,
+            this.props.value
+            || this.props.setValue
+            || this.props.defaultValue);
           setTimeout(function () {
-            var formOnInput = element.parents('.form:first').data('onInput');
+            var form = element.parents('form.form:first'),
+              formOnInput = form.data('onInput');
             if (formOnInput) {
-              formOnInput(new AuiSyntheticSyntheticEvent(element));
+              form.form('set value',
+                this.props.name,
+                this.props.value
+                || this.props.setValue
+                || this.props.defaultValue);
+              formOnInput(new AuiSyntheticSyntheticEvent(element, element));
             }
-          });
+          }.bind(this));
         }
       });
   },
@@ -356,6 +358,20 @@ var Semantic = React.createClass({
           element[moduleType].apply(element, behavior);
         }
       });
+    if (props.name && props.setValue !== this._setValue) {
+      this._setValue = props.setValue
+      console.log('setValue', props.name, [props.setValue]);
+      setTimeout(function () {
+        var form = element.parents('form.form:first'),
+          formOnInput = form.data('onInput');
+        if (formOnInput) {
+          form.form('set value',
+            props.name,
+            props.setValue);
+          formOnInput(new AuiSyntheticSyntheticEvent(element, element));
+        }
+      }.bind(this));
+    }
   }
   //shouldComponentUpdate: function () { return false; }
 });

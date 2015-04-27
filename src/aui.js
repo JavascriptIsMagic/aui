@@ -358,9 +358,19 @@ var Semantic = React.createClass({
           element[moduleType].apply(element, behavior);
         }
       });
-    if (props.name && props.setValue !== this._setValue) {
-      this._setValue = props.setValue
-      console.log('setValue', props.name, [props.setValue]);
+    if (props.form && JSON.stringify(props.setValues) !== this._setValues) {
+      this._setValues = JSON.stringify(props.setValues);
+      setTimeout(function () {
+        var formOnInput = element.data('onInput');
+        if (formOnInput) {
+          element.form('set values', props.setValues);
+          this.setState({ formData: element.form('get values') });
+          formOnInput(new AuiSyntheticSyntheticEvent(element, element));
+        }
+      }.bind(this));
+    }
+    if (props.name && JSON.stringify(props.setValue) !== this._setValue) {
+      this._setValue = JSON.stringify(props.setValue);
       setTimeout(function () {
         var form = element.parents('form.form:first'),
           formOnInput = form.data('onInput');

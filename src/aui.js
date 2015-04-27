@@ -321,20 +321,15 @@ var Semantic = React.createClass({
         }
         element[moduleType].apply(element, settings);
         if (props.name) {
-          console.log('didmount:set value',
-            this.props.name,
-            this.props.value
-            || this.props.setValue
-            || this.props.defaultValue);
           setTimeout(function () {
             var form = element.parents('form.form:first'),
               formOnInput = form.data('onInput');
             if (formOnInput) {
               form.form('set value',
-                this.props.name,
-                this.props.value
-                || this.props.setValue
-                || this.props.defaultValue);
+                props.name,
+                props.value
+                || props.setValue
+                || props.defaultValue);
               formOnInput(new AuiSyntheticSyntheticEvent(element, element));
             }
           }.bind(this));

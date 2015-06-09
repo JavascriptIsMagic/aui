@@ -1,6 +1,14 @@
 \<Aui/\> = React + Semantic UI for Alicorns.
 ==========================================
 
+
+
+WARNING: This branch is under construction!
+Doing a rewrite for a version 1.x release.
+
+
+
+
 Aui is a small glue component that integrates Semantic UI into React as properties, which feels more natural.
 
 Instead of many new components, all properties that === true are automatically translated into the className of each tag.

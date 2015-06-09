@@ -1,25 +1,33 @@
 {
   "name": "aui",
   "main": "dist/aui.js",
-  "version": "0.10.4",
+  "version": "1.0.0",
   "description": "<Aui/> = React + Semantic UI for Alicorns.",
   "keywords": [
     "react",
-    "semantic",
     "semantic-ui",
     "semantic ui",
+    "semantic",
+    "ui",
     "reactjs",
     "react.js",
     "react-component",
     "react component",
+    "jsx",
+    "cjsx",
+    "component",
     "alicorns",
     "alicorn",
-    "magic"
+    "unicorn",
+    "pony",
+    "magic",
+    "browserify",
+    "watchify"
   ],
   "dependencies": {
-    "react": "0.12",
-    "semantic-ui": "1",
-    "jquery": ">=1.8"
+    "react": ">=0.13",
+    "semantic-ui": ">=2",
+    "jquery": ">=1"
   },
   "repository": {
     "type": "git",

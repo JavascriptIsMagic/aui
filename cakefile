@@ -1,0 +1,33 @@
+require 'cake-gulp'
+uglify = require 'gulp-uglify'
+
+option '-w', '--watch', 'Watch files for changes.'
+
+coffeeFiles = ["#{__dirname}/src/**/*.coffee"]
+task 'build:coffee', 'Builds CoffeScript files from src/*.coffee to dist/*.js', (options, callback) ->
+  src coffeeFiles
+    .pipe sourcemaps.init()
+      .pipe (
+        coffee bare: no
+          .on 'error', log)
+    .pipe sourcemaps.write "."
+    .pipe debug title: 'coffee:'
+    .pipe dest "#{__dirname}/dist"
+  callback()
+task 'build:coffee:minify', 'Builds CoffeScript files from src/*.coffee to dist/*.js', (options, callback) ->
+  src coffeeFiles
+    .pipe sourcemaps.init()
+      .pipe (
+        coffee bare: no
+          .on 'error', log)
+      .pipe rename extname: '.min.js'
+      .pipe uglify()
+    .pipe sourcemaps.write "."
+    .pipe debug title: 'minify coffee:'
+    .pipe dest "#{__dirname}/dist"
+  callback()
+
+task 'build', 'Builds all the files for this project, -w to watch for file changes.', ['build:coffee', 'build:coffee:minify'], (options) ->
+  if options.watch
+    log "[#{green 'Watching'}] /lib/**/*.coffee files"
+    watch coffeeFiles, ['build:coffee', 'build:coffee:minify']

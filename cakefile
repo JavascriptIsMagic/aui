@@ -10,7 +10,7 @@ task 'build:coffee', 'Builds CoffeScript files from src/*.coffee to dist/*.js', 
       .pipe (
         coffee bare: no
           .on 'error', log)
-    .pipe sourcemaps.write "."
+    .pipe sourcemaps.write()
     .pipe debug title: 'coffee:'
     .pipe dest "#{__dirname}/dist"
   callback()

@@ -1,17 +1,13 @@
 optional = require
-$ = window.jQuery or optional 'jquery'
-React = window.React or (try optional 'react') or optional 'react/addons'
+$ = window.jQuery
+React = window.React
 
 ## class <Aui/>
 # Aui class is the main wrapper class
 # it recursively goes through all it's children,
 # finding props that === true or are on the Aui.modules list,
 # and merges them into the className of each element.
-Aui = React.createClass
-  #propTypes: children: React.PropTypes.element.isRequired
-  render: ->
-    console.log @props.children
-    recursivelyClassifyProps @props.children
+Aui = React.createClass render: -> recursivelyClassifyProps React.Children.only @props.children
 Aui.Aui = Aui
 
 ## string[] Aui.modules
@@ -55,6 +51,7 @@ classifyProps = Aui.classifyProps = (element, props = {}) ->
 ## element Aui.recursivelyClassifyProps(ReactElement)
 # calls Aui.classifyProps for the ReactElement, and recusively for all it's children.
 # `Aui.recursivelyClassifyProps(<div ui grid><div column>content</div></div>)`
+# returns `<div ui grid className="ui grid"><div column className="column">content</div></div>`
 recursivelyClassifyProps = Aui.recursivelyClassifyProps = (element) ->
   children = React.Children.map element?.props?.children, (child) ->
     recursivelyClassifyProps child

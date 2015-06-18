@@ -1,6 +1,6 @@
 optional = require
-$ = window.jQuery
-React = window.React
+$ = window.jQuery or require 'jquery'
+React = window.React or require 'react'
 
 ## class <Aui/>
 # Aui class is the main wrapper class

@@ -258,7 +258,15 @@ var Semantic = React.createClass({
       props = self.props.children.props,
       element = jQuery(self.getDOMNode()),
       bothFormOnInput = self.bothFormOnInput;
-    if (props.name) { element.attr('data-name', props.name); }
+    if (props.name) {
+      element
+        .attr('data-name', props.name)
+        .parents('form.form:first')
+        .form('set value', props.name, props.setValue);
+    }
+    if (props.form && props.setValues) {
+      element.form('set values', props.setValues)
+    }
     props.className.split(' ')
       .filter(function (moduleType) { return moduleSearch.test(moduleType); })
       .map(function (moduleType) {

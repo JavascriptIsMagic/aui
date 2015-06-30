@@ -32,7 +32,7 @@ class AuiOptions
     unless @ instanceof AuiOptions
       return new AuiOptions options
     options or= {}
-    for own key, value in Aui.defaults
+    for own key, value of Aui.defaults
       @[key] = if options[key]? then options[key] else value
 
 ## mixin AuiMixin
@@ -59,11 +59,12 @@ Aui.classify = (children, options) ->
     if element.props.className
       for name in "#{element.props.className}".split /\s+/g
         classNames[name] = yes if name
-    for own name, include of element.props or {}
-      if jQuery and options.modules and (Array.isArray include) and name in Aui.modules
-        isModule = classNames[name] = yes
-      else if include is yes
-        classNames[name] = yes
+    if element.props?
+      for own name, include of element.props
+        if jQuery and options.modules and (Array.isArray include) and name in Aui.modules
+          isModule = classNames[name] = yes
+        else if include is yes
+          classNames[name] = yes
     classNames = Object.keys classNames
     if options.recursive and element.props.children?
       props.children = Aui.classify element.props.children, options
@@ -89,7 +90,7 @@ Aui.Module = React.createClass
   componentDidMount: -> @callModules @props.children.props
   componentWillReceiveProps: (props) -> @callModules props.children.props
   callModules: (props) ->
-    for module, args of props
+    for own module, args of props
       if (Array.isArray args) and (typeof jQuery.fn[module] is 'function') and (module in Aui.module)
         $element = jQuery React.findDOMNode @
         console.log $element[0]

@@ -3,6 +3,7 @@ unless React? then throw new Error "Aui: window.React not found."
 unless jQuery? then console.warn "Aui: window.jQuery not found, Modules and Semantic-UI will be disabled."
 unless jQuery?.site?.settings?.modules? then console.warn 'Aui: No Semantic-UI window.jQuery.site.settings.modules found, Semantic will be disabled.'
 
+
 ## mixin Aui.Mixin
 # Aui class is the main wrapper class
 # it recursively goes through all it's children,
@@ -10,21 +11,27 @@ unless jQuery?.site?.settings?.modules? then console.warn 'Aui: No Semantic-UI w
 # and merges them into the className of each element.
 AuiMixin =
   componentWillMount: ->
+    @$ = (ref) -> jQuery? React.findDOMNode @refs[ref] or ref
     render = @render
     @render = ->
       element = render?.apply? @, arguments
       if React.isValidElement element
-        Aui.classify element, @props
+        Aui.classify element
       else
-        Aui.classify (Aui.warning 'Aui.Mixin: Child is not a React.isValidElement', element), @props
+        Aui.classify Aui.warning 'Aui.Mixin: Child is not a React.isValidElement', element
 
-## class <Aui/>
+## (depricated) class <Aui/>
 # A tag that applies the Aui.Mixin
+# Using the Aui.Mixin in your Component is prefered over <Aui/> tag.
 Aui = React.createClass
   mixins: [AuiMixin]
-  render: -> @props.children
-Aui.Aui = Aui
+  render: ->
+    Aui.warning '<Aui/> tag is depricated, use Aui.Mixin instead', @props.children
+  componentDidMount: ->
+    console.warn React.findDOMNode @
 Aui.Mixin = Aui.AuiMixin = AuiMixin
+Aui.Aui = Aui
+Aui.$ = jQuery
 
 ## function Aui.warning (string, element)
 # console.warn a warning message
@@ -42,6 +49,8 @@ Aui.defaults =
   disableSemantic: not jQuery?.site?.settings?.modules?
   # do not recursively Aui.classify children by default.
   ignoreChildren: no
+  # automatically event.preventDefault() onSubmit of <form> tags
+  preventDefaultSubmit: yes
 
 ## internal class `AuiOptions({options})`
 # defaults all Aui options
@@ -63,7 +72,7 @@ class AuiOptions
 Aui.classify = (element, options) ->
   options = AuiOptions options
   unless React.isValidElement element
-    Aui.warning 'Aui.classify: element is not a React.isValidElement', element
+    element = Aui.warning 'Aui.classify: element is not a React.isValidElement', element
   classify = (element) ->
     return element unless React.isValidElement element
     classNames = {}
@@ -75,17 +84,17 @@ Aui.classify = (element, options) ->
     for own key, value of element.props
       classNames[key] = yes if value is yes
       if (not options.disableModules) and (Array.isArray value) and (key in Aui.modules)
-        unless modules then modules = []
-        classNames[key] = true
-        modules.push key
+        classNames[key] = yes
+        modules or= {}
+        modules[key] = value
       props[key] = value
     props.className = Object.keys(classNames).join ' '
     unless props.className.length
       delete props.className
-    console.log modules, (if typeof element.type is 'string' then element.type else 'Component'), props.className or ''
+    #console.log modules, (if typeof element.type is 'string' then element.type else 'Component'), props.className or ''
     element = React.cloneElement element, props, if options.ignoreChildren then element.props.children else React.Children.map element.props.children, classify
     if modules
-      React.createElement Aui.Module, { modules }, element
+      React.createElement Aui.Module, { modules, options }, element
     else element
   classify element
 
@@ -98,29 +107,41 @@ Aui.classify = (element, options) ->
 # but in theory could be used to call any `window.jQuery.fn` function
 Aui.modules = (jQuery?.site?.settings?.modules or []).slice()
 
-## internal cache of options passed to modules.
-moduleCache = {}
+## internal global cache of options passed to module functions.
+cache = {}
+
 ## internal class <Aui.Module/>
 # This class provides support for `Aui.modules` and handles calling jQuery.fn[module] calls
 Aui.Module = React.createClass
   render: -> React.Children.only @props.children
-  componentDidMount: -> @callModules @props.children.props
-  componentWillReceiveProps: (props) -> @callModules props.children.props
+  preventDefault: (event) ->
+    event?.preventDefault?()
+  componentDidMount: ->
+    if @props.options.preventDefaultSubmit and 'form' of @props.modules
+      jQuery(React.findDOMNode @).on 'submit', @preventDefault
+    @callModules @props.children.props
+  componentWillReceiveProps: (props) ->
+    @callModules props.children.props
   callModules: (props) ->
     $element = jQuery React.findDOMNode @
-    moduleId = $element.attr 'data-reactid'
-    if moduleId isnt @moduleId
-      console.log 'moduleId isnt @moduleId', moduleId, @moduleId
-      delete moduleCache[@moduleId]
-    @moduleId = moduleId
-    moduleCache[@moduleId] or= {}
-    for module, options in @props.modules
-      cacheOptions = JSON.stringify options
-      if moduleCache[@moduleId][module] isnt cacheOptions
-        moduleCache[@moduleId][module] = cacheOptions
-        ($element)[module] @props.children.props[module]...
+    @id = $element.attr 'data-reactid'
+    cache[@id] or= {}
+    for own module, options of @props.modules
+      stringifiedOptions = JSON.stringify options
+      if cache[@id][module] isnt stringifiedOptions
+        cache[@id][module] = stringifiedOptions
+        console.log module, stringifiedOptions, React.findDOMNode @
+        $element[module]? @props.children.props[module]...
     return
   componentWillUnmount: ->
-    delete moduleCache[@moduleId]
+    $element = jQuery React.findDOMNode @
+    if 'form' of @props.modules
+      $element.off 'submit', @preventDefault
+    unless @props.options.disableSemantic
+      for module in @props.modules
+        $element[module]? 'destroy'
+    delete cache[@id]
+    console.log 'componentWillUnmount', React.findDOMNode @
+    #throw new Error 'STOP drop and roll...'
 window?.Aui = Aui
 module?.exports = Aui

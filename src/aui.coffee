@@ -114,11 +114,9 @@ cache = {}
 # This class provides support for `Aui.modules` and handles calling jQuery.fn[module] calls
 Aui.Module = React.createClass
   render: -> React.Children.only @props.children
-  preventDefault: (event) ->
-    event?.preventDefault?()
   componentDidMount: ->
     if @props.options.preventDefaultSubmit and 'form' of @props.modules
-      jQuery(React.findDOMNode @).on 'submit', @preventDefault
+      jQuery(React.findDOMNode @).on 'submit', (event) -> event?.preventDefault?()
     @callModules @props.children.props
   componentWillReceiveProps: (props) ->
     @callModules props.children.props
@@ -134,14 +132,6 @@ Aui.Module = React.createClass
         $element[module]? @props.children.props[module]...
     return
   componentWillUnmount: ->
-    $element = jQuery React.findDOMNode @
-    if 'form' of @props.modules
-      $element.off 'submit', @preventDefault
-    unless @props.options.disableSemantic
-      for module in @props.modules
-        $element[module]? 'destroy'
     delete cache[@id]
-    #console.log 'componentWillUnmount', React.findDOMNode @
-    #throw new Error 'STOP drop and roll...'
 window?.Aui = Aui
 module?.exports = Aui

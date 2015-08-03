@@ -130,7 +130,7 @@ Aui.Module = React.createClass
       stringifiedOptions = JSON.stringify options
       if cache[@id][module] isnt stringifiedOptions
         cache[@id][module] = stringifiedOptions
-        console.log module, stringifiedOptions, React.findDOMNode @
+        #console.log module, stringifiedOptions, React.findDOMNode @
         $element[module]? @props.children.props[module]...
     return
   componentWillUnmount: ->

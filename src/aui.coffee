@@ -141,7 +141,7 @@ Aui.Module = React.createClass
       for module in @props.modules
         $element[module]? 'destroy'
     delete cache[@id]
-    console.log 'componentWillUnmount', React.findDOMNode @
+    #console.log 'componentWillUnmount', React.findDOMNode @
     #throw new Error 'STOP drop and roll...'
 window?.Aui = Aui
 module?.exports = Aui

@@ -1,4 +1,4 @@
-{React, jQuery} = global or window
+{React, jQuery} = window or global
 unless React? then throw new Error "Aui: window.React not found."
 unless jQuery? then console.warn "Aui: window.jQuery not found, Modules and Semantic-UI will be disabled."
 unless jQuery?.site?.settings?.modules? then console.warn 'Aui: No Semantic-UI window.jQuery.site.settings.modules found, Semantic will be disabled.'
@@ -128,7 +128,6 @@ Aui.Module = React.createClass
       stringifiedOptions = JSON.stringify options
       if cache[@id][module] isnt stringifiedOptions
         cache[@id][module] = stringifiedOptions
-        #console.log module, stringifiedOptions, React.findDOMNode @
         $element[module]? @props.children.props[module]...
     return
   componentWillUnmount: ->

@@ -146,14 +146,12 @@ This will result in something like this after React's render on the dom:
 
 Make sure to include react.js, jquery.js, semantic.js, and semantic.css on your page
 ```html
-<html>
-  <head>
-  </head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.7/semantic.css" rel="stylesheet"></link>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.7/semantic.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
   <script src="aui.js"></script>
-</html>
 ```
 
 Aui is also available on Bower!

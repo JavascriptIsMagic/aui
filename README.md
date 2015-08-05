@@ -153,7 +153,6 @@ Make sure to include react.js, jquery.js, semantic.js, and semantic.css on your 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.7/semantic.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
   <script src="aui.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
 </html>
 ```
 

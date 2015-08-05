@@ -13,7 +13,7 @@ Aui.$.fn.api.settings.api = {
   //login: '/echo/json/?delay=2'
 }
 
-examples['gfqc2qrz'] = React.createClass({
+examples['dp9reqnz'] = React.createClass({
   mixins: [Aui.Mixin],
   getInitialState: function () {
     return {
@@ -141,7 +141,7 @@ var Page = React.createClass({
       <div ui container>
         <br/> <h1 header>Aui 2.x - Examples</h1>
         <div ui divider></div>
-        <Example id="gfqc2qrz" title="Semantic Form Example:" link="http://semantic-ui.com/introduction/getting-started.html"></Example>
+        <Example id="dp9reqnz" title="Semantic Form Example:" link="http://semantic-ui.com/introduction/getting-started.html"></Example>
       </div>
     )
   }

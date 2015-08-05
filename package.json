@@ -2,7 +2,7 @@
   "name": "aui",
   "main": "dist/aui.js",
   "version": "2.0.0",
-  "description": "Aui is the glue between React + Semantic-UI",
+  "description": "Aui is Semantic-UI + React",
   "keywords": [
     "react",
     "semantic-ui",
@@ -15,6 +15,8 @@
     "react component",
     "jsx",
     "cjsx",
+    "coffee",
+    "coffee-script",
     "component",
     "alicorns",
     "alicorn",
@@ -27,9 +29,7 @@
   ],
   "devDependencies": {
     "cake-gulp": "0",
-    "gulp-uglify": "1"
-  },
-  "optionalDependencies": {
+    "gulp-uglify": "1",
     "send": "0.13"
   },
   "repository": {
@@ -37,7 +37,7 @@
     "url": "https://github.com/javascriptismagic/aui.git"
   },
   "author": "Cofficorn <javascriptismagic@gmail.com>",
-  "license": "Public Domain (Unlicense)",
+  "license": "Unlicense",
   "bugs": {
     "url": "https://github.com/javascriptismagic/aui/issues"
   },

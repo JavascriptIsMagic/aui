@@ -1,117 +1,178 @@
-\<Aui/\> = React + Semantic UI for Alicorns.
-==========================================
+Aui is Semantic UI + React
+==========================
+
+Aui is a small, lightweight glue library that integrates Semantic UI into React as properties, which feels more natural.
+
+Instead of many new React Components, all properties that === true are automatically translated into the className of each tag.
+Semantic Modules and other semantic javascript can be called as it was intended, like semantic's dropdowns, form validation, and even api.
 
 
-
-WARNING: This branch is under construction!
-Doing a rewrite for a version 1.x release.
-
-
-
-
-Aui is a small glue component that integrates Semantic UI into React as properties, which feels more natural.
-
-Instead of many new components, all properties that === true are automatically translated into the className of each tag.
-Semantic Modules and other semantic javascript is automatically called on things that need it, like semantic's dropdowns, form validation, and even api.
-(don't forget to include semantic.css on your page!)
 
 [JSFiddle around with the examples here!](http://javascriptismagic.github.io/aui/)
 
 ```js
-var
- React = require('react'),
- Aui = require('aui').Aui;
+// Set up Semantic's api module
+// http://semantic-ui.com/behaviors/api.html
+Aui.$.fn.api.settings.method = 'POST'
+Aui.$.fn.api.settings.api = {
+  login: '/echo/json/?delay=2'
+}
 
-var LoginForm = React.createClass({
- submit: function (event) {
-  console.log(event.data);
-  alert(JSON.stringify(event.data, null, 4));
- },
- render: function () {
-  return (
-  <Aui>
-   <form ui segment form={this.validation} onSubmit={this.submit}>
-   <h1 ui header>{document.title} Login:</h1>
-   <div field>
-    <div ui icon input>
-     <input type="text" name="username" placeholder="Username"/>
-     <i user icon/>
-    </div>
-   </div>
-   <div field>
-    <div ui icon input>
-     <input type="password" name="password" placeholder="Password"/>
-     <i privacy icon/>
-    </div>
-   </div>
-   <div ui error message/>
-   <div ui right aligned basic segment>
-    <div field>
-     <div ui blue submit button>Login</div>
-    </div>
-   </div>
-   </form>
-  </Aui>
-  );
- },
- validation: {
-  username: {
-   identifier: 'username',
-   rules: [
-    { type: 'empty', prompt: 'Please enter a username' }
-   ]
+var Example = React.createClass({
+  mixins: [Aui.Mixin],
+  getInitialState: function () {
+    return {
+      data: {}
+    }
   },
-  password: {
-   identifier: 'password',
-   rules: [
-    { type: 'empty', prompt: 'Please enter a password' },
-    { type: 'length[6]', prompt: 'Your password must be at least 6 characters' }
-   ]
+  render: function () {
+    return (
+      <div ui container>
+        <form ref="login form" ui segment form>
+          <label ui top attached label>{location.origin} login</label>
+          <div field>
+            <div ui icon input>
+              <input type="text" name="username" placeholder="Username"/>
+              <i user icon/>
+            </div>
+          </div>
+          <div field>
+            <div ui icon input>
+              <input type="password" name="password" placeholder="Password"/>
+              <i privacy icon/>
+            </div>
+          </div>
+          <div field>
+            {/* checkbox={[]} will call $.fn.checkbox() */}
+            <div ui checkbox={[]}>
+              <label>Remember Me</label>
+              <input type="checkbox" name="remember" />
+            </div>
+          </div>
+          <div ui error message></div>
+          <div field>
+            <div ui blue submit button>Login</div>
+          </div>
+        </form>
+      </div>
+    )
+  },
+  onSubmit: function (event) {
+    event.preventDefault()
+    this.setState({
+      data: this.$(event.target)
+        .form('get values')
+    })
+  },
+  beforeSend: function (settings) {
+    // Merge with other React state as desired:
+    settings.data = this.state.data
+    return settings
+  },
+  onLoggedIn: function (data) {
+    alert(this.state.data.username + " is logged in!")
+  },
+  componentDidMount: function () {
+    // jQuery wrap by React ref:
+    var $form = this.$("login form")
+      // http://semantic-ui.com/behaviors/form.html
+      .form({
+        on: "change",
+        inline: true,
+        onSuccess: this.onSubmit,
+        fields: {
+          username: {
+            identifier: "username",
+            rules: [
+              { type: "email", prompt: "Demo Username must be a valid email address (do not submit your real email)" }
+            ]
+          },
+          password: {
+            identifier: "password",
+            rules: [
+              { type: "minLength[3]", prompt: "Demo Password must be 3 or more characters long (do not use a real password)" }
+            ]
+          }
+        }
+      })
+      // http://semantic-ui.com/behaviors/api.html
+      .api({
+        action: 'login',
+        beforeSend: this.beforeSend,
+        onSuccess: this.onLoggedIn,
+        onError: function (error) {
+          $form.form('add errors', [error])
+        }
+      })
   }
- }
-});
+})
 
-React.render(
- <Aui>
-  <div ui page grid>
-   <div column>
-    <LoginForm/>
-   </div>
-  </div>
- </Aui>,
- document.body);
+React.render(<Example />, document.getElementById('container'));
+
 ```
 
-This will result in something like this after render:
+This will result in something like this after React's render on the dom:
 ```html
 <body>
- <div class="ui page grid">
-  <div class="column">
-   <form class="ui segment form">
-     <h1 class="ui header">Login:</h1>
-     <div class="field">
-      <div class="ui icon input">
-       <input type="text" name="username" placeholder="Username" />
-       <i class="user icon" />
-      </div>
-     </div>
-     <div class="field">
-      <div class="ui icon input">
-       <input type="password" name="password" placeholder="Password" />
-       <i class="privacy icon" />
-      </div>
-     </div>
-     <div class="ui error message"></div>
-     <div class="ui right aligned basic segment">
+  <div class="ui container">
+    <form class="ui segment form">
+      <label class="ui top attached label"> login</label>
       <div class="field">
-       <div class="ui blue submit button">Login</div>
+        <div class="ui icon input">
+          <input type="text" name="username" placeholder="Username"/>
+          <i class="user icon"/>
+        </div>
       </div>
-     </div>
-    </div>
-   </form>
+      <div class="field">
+        <div class="ui icon input">
+          <input type="password" name="password" placeholder="Password"/>
+          <i class="privacy icon"/>
+        </div>
+      </div>
+      <div class="field">
+        <div class="ui checkbox">
+          <label>Remember Me</label>
+          <input type="checkbox" name="remember" />
+        </div>
+      </div>
+      <div class="ui error message"></div>
+      <div class="field">
+        <div class="ui blue submit button">Login</div>
+      </div>
+    </form>
   </div>
- </div>
 </body>
+```
+
+Make sure to include react.js, jquery.js, semantic.js, and semantic.css on your page
+```html
+<html>
+  <head>
+  </head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.7/semantic.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>
+  <script src="aui.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+</html>
+```
+
+Aui is also available on Bower!
+
+You may also may wish to use Browserify or some other CommonJS style bundler:
+```js
+// If you wish to load Semantic, jQuery, and React from the window object:
+var Aui = require('aui')
+
+// If you wish to bundle Semantic, jQuery, and React
+var Aui = require('aui/externals')
+```
+
+If you use coffee-script and wish to go native:
+```coffee
+Aui = require 'aui/.coffee'
+# or
+Aui = require 'aui/externals.coffee'
 ```
 
 -------------------------------------------------

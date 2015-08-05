@@ -2,7 +2,7 @@
   "name": "aui",
   "main": "dist/aui.js",
   "version": "2.0.0",
-  "description": "<Aui/> = React + Semantic UI for Alicorns.",
+  "description": "Aui is Semantic-UI + React",
   "keywords": [
     "react",
     "semantic-ui",
@@ -36,7 +36,7 @@
   "authors": [
     "Brian <javascriptismagic@gmail.com>"
   ],
-  "license": "Public Domain (Unlicense)",
+  "license": "Unlicense",
   "bugs": {
     "url": "https://github.com/javascriptismagic/aui/issues"
   },

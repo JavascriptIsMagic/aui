@@ -8,7 +8,6 @@ var Example, examples = {}
 // Set up Semantic's api module
 // http://semantic-ui.com/behaviors/api.html
 Aui.$.fn.api.settings.method = 'POST'
-// Aui.$.fn.api.settings.mockResponse = { success: true }
 Aui.$.fn.api.settings.api = {
   login: 'package.json'
   //login: '/echo/json/?delay=2'
@@ -24,7 +23,7 @@ examples['gfqc2qrz'] = React.createClass({
   render: function () {
     return (
       <div ui container>
-        <form ref="login" ui segment form>
+        <form ref="login form" ui segment form>
           <label ui top attached label>{location.origin} login</label>
           <div field>
             <div ui icon input>
@@ -70,7 +69,7 @@ examples['gfqc2qrz'] = React.createClass({
   },
   componentDidMount: function () {
     // jQuery wrap by React ref:
-    var $form = this.$("login")
+    var $form = this.$("login form")
       // http://semantic-ui.com/behaviors/form.html
       .form({
         on: "change",

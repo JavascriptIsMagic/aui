@@ -5,13 +5,13 @@ unless jQuery?.site?.settings?.modules? then console.warn 'Aui: No Semantic-UI w
 
 
 ## mixin Aui.Mixin
-# Aui class is the main wrapper class
+# Aui.Mixin is the main wrapper around React Components
 # it recursively goes through all it's children,
 # finding props that === true or are on the `Aui.modules` list,
 # and merges them into the className of each element.
 AuiMixin =
+  $: (ref) -> jQuery React.findDOMNode @refs[ref] or ref
   componentWillMount: ->
-    @$ = (ref) -> jQuery? React.findDOMNode @refs[ref] or ref
     render = @render
     @render = ->
       element = render?.apply? @, arguments
@@ -40,17 +40,15 @@ Aui.warning = (message, element) ->
   console.warn message, element
   React.DOM.span { 'data-warning': message }, element
 
-## object Aui.defaults
+## object Aui.settings
 # The default options Aui uses when no options or props are passed in.
-Aui.defaults =
+Aui.settings =
   # disables jQuery based Aui.modules from calling
   disableModules: not jQuery?
   # disables Semantic-UI specific features
   disableSemantic: not jQuery?.site?.settings?.modules?
   # do not recursively Aui.classify children by default.
   ignoreChildren: no
-  # automatically event.preventDefault() onSubmit of <form> tags
-  preventDefaultSubmit: yes
 
 ## internal class `AuiOptions({options})`
 # defaults all Aui options
@@ -61,7 +59,7 @@ class AuiOptions
     unless @ instanceof AuiOptions
       return new AuiOptions options
     options or= {}
-    for own key, value of Aui.defaults
+    for own key, value of Aui.settings
       @[key] = if options[key]? then options[key] else value
 
 ## element `Aui.classify(element, {options})`
@@ -79,7 +77,7 @@ Aui.classify = (element, options) ->
     modules = null
     props = {}
     if element.props.className?
-      for className in "#{element.props.className}".split ' '
+      for className in "#{element.props.className}".split /\s+/g
         classNames[key] = yes
     for own key, value of element.props
       classNames[key] = yes if value is yes
@@ -115,8 +113,6 @@ cache = {}
 Aui.Module = React.createClass
   render: -> React.Children.only @props.children
   componentDidMount: ->
-    if @props.options.preventDefaultSubmit and 'form' of @props.modules
-      jQuery(React.findDOMNode @).on 'submit', (event) -> event?.preventDefault?()
     @callModules @props.children.props
   componentWillReceiveProps: (props) ->
     @callModules props.children.props

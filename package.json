@@ -25,14 +25,12 @@
     "watchify",
     "bower"
   ],
-  "optionalDependencies": {
-    "react": ">=0.13",
-    "jquery": ">=1",
-    "semantic-ui": ">=2"
-  },
   "devDependencies": {
     "cake-gulp": "0",
     "gulp-uglify": "1"
+  },
+  "optionalDependencies": {
+    "send": "0.13"
   },
   "repository": {
     "type": "git",

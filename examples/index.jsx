@@ -23,7 +23,7 @@ examples['gfqc2qrz'] = React.createClass({
   },
   render: function () {
     return (
-      <div ui mini container>
+      <div ui container>
         <form ref="login" ui segment form>
           <label ui top attached label>{location.origin} login</label>
           <div field>
@@ -76,20 +76,20 @@ examples['gfqc2qrz'] = React.createClass({
         on: "change",
         inline: true,
         onSuccess: this.onSubmit,
-        // fields: {
-        //   username: {
-        //     identifier: "username",
-        //     rules: [
-        //       { type: "email", prompt: "Demo Username must be a valid email address (do not submit your real email)" }
-        //     ]
-        //   },
-        //   password: {
-        //     identifier: "password",
-        //     rules: [
-        //       { type: "minLength[3]", prompt: "Demo Password must be 3 or more characters long (do not use a real password)" }
-        //     ]
-        //   }
-        // }
+        fields: {
+          username: {
+            identifier: "username",
+            rules: [
+              { type: "email", prompt: "Demo Username must be a valid email address (do not submit your real email)" }
+            ]
+          },
+          password: {
+            identifier: "password",
+            rules: [
+              { type: "minLength[3]", prompt: "Demo Password must be 3 or more characters long (do not use a real password)" }
+            ]
+          }
+        }
       })
       // http://semantic-ui.com/behaviors/api.html
       .api({

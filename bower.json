@@ -1,7 +1,7 @@
 {
   "name": "aui",
   "main": "dist/aui.js",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Aui is Semantic-UI + React",
   "keywords": [
     "react",

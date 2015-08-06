@@ -78,7 +78,7 @@ Aui.classify = (element, options) ->
     props = {}
     if element.props.className?
       for className in "#{element.props.className}".split /\s+/g
-        classNames[key] = yes
+        classNames[className] = yes
     for own key, value of element.props
       classNames[key] = yes if value is yes
       if (not options.disableModules) and (Array.isArray value) and (key in Aui.modules)

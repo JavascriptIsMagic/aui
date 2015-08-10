@@ -1,12 +1,12 @@
-Aui is Semantic UI + React
+Aui = [![Semantic-UI](http://javascriptismagic.github.io/aui/logos/semantic.png) Semantic](http://semantic-ui.com/) + [![React](http://javascriptismagic.github.io/aui/logos/react.png) React](http://facebook.github.io/react/)
 ==========================
 
-Aui is a small, lightweight glue library that integrates Semantic UI into React as properties, which feels more natural.
+Aui is a small, lightweight glue library that integrates [Semantic](http://semantic-ui.com/) into [React](http://facebook.github.io/react/) as properties, which feels more natural.
+
+[Aui is a tiny library, you can browse the docs/source code here!](http://javascriptismagic.github.io/aui/docs/aui.coffee.html)
 
 Instead of many new React Components, all properties that === true are automatically translated into the className of each tag.
 Semantic Modules and other semantic javascript can be called as it was intended, like semantic's dropdowns, form validation, and even api.
-
-
 
 [JSFiddle around with the examples here!](http://javascriptismagic.github.io/aui/)
 
@@ -147,7 +147,7 @@ This will result in something like this after React's render on the dom:
 Make sure to include react.js, jquery.js, semantic.js, and semantic.css on your page
 ```html
   <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.7/semantic.css" rel="stylesheet"></link>
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.0.7/semantic.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js"></script>

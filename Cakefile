@@ -1,4 +1,9 @@
+###
+npm install -save-dev cake-gulp@latest gulp-uglify@latest grock@latest
+###
+
 require 'cake-gulp'
+grock = require 'grock'
 uglify = require 'gulp-uglify'
 
 option '-w', '--watch', 'Watch files for changes.'
@@ -11,9 +16,6 @@ task 'build:staticserver', 'Hosts a static server to test examples', (options) -
       .createServer (request, response) ->
         log "--> #{request.url}"
         response.setHeader 'Cache-Control', 'max-age=0, no-cache, no-store'
-        # response.setHeader 'Cache-Control', 'private, no-cache, no-store, must-revalidate'
-        # response.setHeader 'Expires', '-1'
-        # response.setHeader 'Pragma', 'no-cache'
         send request, request.url, root: __dirname
           .pipe response
         request.on 'end', ->
@@ -51,3 +53,19 @@ task 'build', 'Builds all the files for this project, -w to watch for file chang
   if options.watch
     log "[#{green 'Watching'}] /lib/**/*.coffee files"
     watch coffeeFiles, ['build:coffee', 'build:coffee:minify']
+
+task 'docs:clean', 'Cleans the documentation directory.', (options, callback) ->
+  del "#{__dirname}/docs/**/*", { force: yes }, (error, files) ->
+    log "\n[#{green 'clean'}]\n", files.map(fancypath).join '\n '
+    callback()
+
+task 'docs:generate', 'Generates the documentation using Grock', ['docs:clean'], (options, callback) ->
+  grock.generator
+    glob: ["#{__dirname}/src/**/*.coffee"]
+    out: "#{__dirname}/docs/"
+    style: 'solarized'
+  callback()
+
+task 'docs', 'Uses the wonderful Grock documentation generator from comments.', ['docs:generate'], ->
+  if options.watch
+    watch "#{__dirname}/src/**/*.coffee", ['docs']

@@ -140,6 +140,7 @@ var Page = React.createClass({
     return (
       <div ui container>
         <br/> <h1 header>Aui 2.x - Examples</h1>
+        <a href="/aui/docs/aui.coffee.html">Check out the docs here!</a>
         <div ui divider></div>
         <Example id="dp9reqnz" title="Semantic Form Example:" link="http://semantic-ui.com/introduction/getting-started.html"></Example>
       </div>
